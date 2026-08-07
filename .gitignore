@@ -4,3 +4,4 @@ dist/
 *.local
 .vite/
 docs/pdf/*.html
+unity-build/

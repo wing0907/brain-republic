@@ -56,6 +56,18 @@
 - 게임 오버는 없지만 "소멸"로 진행을 잃을 수 있습니다 — 세계관 그대로,
   **주인의 뇌에서 잊혀지지 않는 것**이 곧 생존입니다.
 
+### 보너스 모드 — 두뇌공화국 3D: 기억 원정대 (Unity WebGL)
+
+같은 세계관의 **3D 스테이지 클리어 모드**를 함께 제출합니다
+(타이틀 화면의 「3D 기억 원정대」 버튼 또는 직접 링크로 진입).
+
+- 빛나는 **기억 구슬**을 드래그(또는 방향키)로 굴려 6개 국 테마의 3D 협곡
+  스테이지를 돌파 — 기억 조각을 모아 게이트 통과, 별점(클리어 시간) 획득
+- 스테이지별 기믹: 함정(충동), 이동 블록(맥박), 미끄러운 빙판(눈물),
+  **올바른 단어 게이트 선택**(언어), 짙은 안개(수면)
+- 플레이 링크: https://wing0907.github.io/brain-republic/unity/
+- Unity 6 (6000.3.21f1) WebGL — 지오메트리·사운드 전량 코드 생성
+
 ## 3. 실행 방법
 
 ### 플레이 링크 (설치 불필요)
@@ -76,7 +88,8 @@ npm run dev    # http://localhost:5173 접속
 | 항목 | 링크 |
 |---|---|
 | 플레이(웹 빌드) | https://wing0907.github.io/brain-republic/ |
-| 소스 코드(GitHub) | https://github.com/wing0907/brain-republic |
+| 3D 모드(Unity WebGL) | https://wing0907.github.io/brain-republic/unity/ |
+| 소스 코드(GitHub) | https://github.com/wing0907/brain-republic (Unity 프로젝트: `/unity` 폴더) |
 | 플레이 영상(YouTube) | (업로드 후 기입) |
 
 ## 5. 개발 정보
@@ -84,8 +97,10 @@ npm run dev    # http://localhost:5173 접속
 - **팀**: 뇌지컬연구소 (성지은 · 장우진)
 - **원작 기획**: 성지은 — 오리지널 세계관 「두뇌공화국」의 창작자이자 본 게임의
   원천 기획자. 이 게임은 성지은의 기획으로부터 탄생했습니다.
-- 엔진/기술: Phaser 3 (MIT) + Vite, HTML5 Canvas, WebAudio
+- 엔진/기술: Phaser 3 (MIT) + Vite / 3D 모드: Unity 6 WebGL (Personal)
 - 그래픽·사운드: **외부 에셋 0** — 지형·건물·크리처·아이콘·효과음 전량 코드로
   프로시저럴 생성 (저작권 이슈 없음)
+- 유일한 외부 에셋: 3D 모드 한글 폰트 **Pretendard** (SIL Open Font License 1.1,
+  https://github.com/orioncactus/pretendard) — WebGL 한글 표시용
 - AI 활용: 기획 번안·코드·밸런싱·QA 전 과정을 Claude Code로 제작 — 별첨
   「AI 활용 기술 문서」 참조
