@@ -111,6 +111,8 @@ export class TitleScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true });
       reset.on('pointerdown', () => {
+        unlock();
+        sfx.ui();
         if (!this.resetArmed) {
           this.resetArmed = true;
           reset.setText('⚠ 공화국이 사라집니다 — 한 번 더 탭하면 초기화').setColor('#ff8a8a');

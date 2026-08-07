@@ -65,7 +65,10 @@ export class PuzzleScene extends Phaser.Scene {
       })
       .setOrigin(1, 0.5)
       .setInteractive({ useHandCursor: true });
-    giveUp.on('pointerdown', () => this.finish(false));
+    giveUp.on('pointerdown', () => {
+      sfx.ui();
+      this.finish(false);
+    });
 
     this.cameras.main.fadeIn(200, 0, 0, 0);
   }
@@ -127,6 +130,7 @@ export class PuzzleScene extends Phaser.Scene {
 
       img.on('dragstart', () => {
         if (img.lockedIn) return;
+        sfx.pick();
         img.setScale(CELL / PIECE_SRC);
         img.setDepth(100);
       });
@@ -150,7 +154,7 @@ export class PuzzleScene extends Phaser.Scene {
           this.locked += 1;
           if (this.locked >= GRID * GRID) this.complete();
         } else {
-          sfx.tap();
+          sfx.thud();
           this.tweens.add({
             targets: img,
             x: img.homeX,

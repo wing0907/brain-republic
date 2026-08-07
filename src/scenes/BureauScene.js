@@ -51,6 +51,7 @@ export class BureauScene extends Phaser.Scene {
       .setOrigin(0, 0.5)
       .setInteractive({ useHandCursor: true });
     back.on('pointerdown', () => {
+      sfx.ui();
       saveState(this.state);
       this.scene.start('Map');
     });
@@ -152,6 +153,7 @@ export class BureauScene extends Phaser.Scene {
     }, 200);
 
     this.tickAcc = 0;
+    this.wasCritical = this.bs.fame <= 0; // 이미 위독한 채 입장하면 경보 생략
     this.refresh();
     this.cameras.main.fadeIn(200, 0, 0, 0);
   }
@@ -191,6 +193,9 @@ export class BureauScene extends Phaser.Scene {
       .image(x, y, 'button')
       .setDisplaySize(width, 118)
       .setInteractive({ useHandCursor: true });
+    // setDisplaySize가 만든 실제 스케일을 기준값으로 보존 — 탭 연출은 반드시 이 값으로 복귀
+    const baseX = img.scaleX;
+    const baseY = img.scaleY;
     const txt = this.add
       .text(x, y, label, {
         fontFamily: FONT,
@@ -202,7 +207,21 @@ export class BureauScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     img.on('pointerdown', () => {
-      this.tweens.add({ targets: [img, txt], scale: { from: 0.94, to: 1 }, duration: 120 });
+      sfx.ui();
+      this.tweens.killTweensOf([img, txt]);
+      this.tweens.add({
+        targets: img,
+        scaleX: { from: baseX * 0.9, to: baseX },
+        scaleY: { from: baseY * 0.9, to: baseY },
+        duration: 150,
+        ease: 'back.out'
+      });
+      this.tweens.add({
+        targets: txt,
+        scale: { from: 0.9, to: 1 },
+        duration: 150,
+        ease: 'back.out'
+      });
       onTap();
     });
     this.buttons[key] = { img, txt };
@@ -226,7 +245,7 @@ export class BureauScene extends Phaser.Scene {
     this.state.coins -= FEED_COST;
     this.bs.hunger = Math.min(100, this.bs.hunger + FEED_GAIN);
     if (this.bs.fame <= 0) this.bs.fame = 3; // 돌봄으로 회생의 불씨
-    sfx.pop();
+    sfx.munch();
     this.say(Phaser.Utils.Array.GetRandom(['냠냠! 힘이 난다!', '이 맛은... 결재 각!', '역시 밥심이야!']));
     this.petJump();
     this.refresh();
@@ -242,7 +261,7 @@ export class BureauScene extends Phaser.Scene {
     this.state.coins -= SLEEP_COST;
     this.bs.energy = Math.min(100, this.bs.energy + SLEEP_GAIN);
     if (this.bs.fame <= 0) this.bs.fame = 3;
-    sfx.pop();
+    sfx.lull();
     this.say(Phaser.Utils.Array.GetRandom(['쿨쿨… 5분만…', '개운하다! 야근 가능!', 'Zzz… 꿈에서도 근무 중']));
     this.petJump();
     this.refresh();
@@ -289,6 +308,7 @@ export class BureauScene extends Phaser.Scene {
       this.bs.complete = true;
       this.state.diamonds += BUREAU_COMPLETE_DIAMONDS;
       sfx.fanfare();
+      this.time.delayedCall(500, () => sfx.gem());
       this.say(`${this.bureau.name} 완성! 💎${BUREAU_COMPLETE_DIAMONDS} 획득!`);
     }
   }
@@ -317,6 +337,11 @@ export class BureauScene extends Phaser.Scene {
     );
 
     const critical = s.fame <= 0;
+    if (critical && !this.wasCritical) {
+      sfx.danger();
+      this.say('의식에서... 잊혀지고 있어...');
+    }
+    this.wasCritical = critical;
     this.petImg.setTint(critical ? 0x666677 : 0xffffff);
     if (critical) {
       this.statusText.setText('⚠ 위독! 주인의 뇌에서 잊혀지는 중… 돌봐서 인지도를 회복하세요!');
