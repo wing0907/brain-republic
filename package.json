@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist",
+    "deploy": "npm run build && gh-pages -d dist --add",
     "docs": "node scripts/make-pdfs.mjs",
     "deploy:unity": "gh-pages -d unity/unity-build --dest unity --add"
   },

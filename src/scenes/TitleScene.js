@@ -89,13 +89,30 @@ export class TitleScene extends Phaser.Scene {
       this.time.delayedCall(320, () => this.scene.start('Map'));
     });
 
+    // 3D 스테이지 모드 (Unity WebGL, /unity/ 경로)
+    const btn3d = this.add
+      .image(GAME_W / 2, 1016, 'button-dark')
+      .setScale(0.8, 0.62)
+      .setInteractive({ useHandCursor: true });
     this.add
-      .text(GAME_W / 2, 1020, '국장들을 먹이고 재우면 주인의 의식에 자주 등장합니다.\n등장하지 못하는 시민은… 조용히 잊혀집니다.', {
+      .text(GAME_W / 2, 1016, '🧊 3D 기억 원정대 (스테이지 모드)', {
         fontFamily: FONT,
-        fontSize: '25px',
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: '#a8e8f0'
+      })
+      .setOrigin(0.5);
+    btn3d.on('pointerdown', () => {
+      window.location.href = './unity/';
+    });
+
+    this.add
+      .text(GAME_W / 2, 1084, '국장들을 먹이고 재우면 주인의 의식에 자주 등장합니다.\n등장하지 못하는 시민은… 조용히 잊혀집니다.', {
+        fontFamily: FONT,
+        fontSize: '23px',
         color: '#a99cc7',
         align: 'center',
-        lineSpacing: 8
+        lineSpacing: 6
       })
       .setOrigin(0.5);
 
@@ -103,7 +120,7 @@ export class TitleScene extends Phaser.Scene {
     if (hasSave) {
       this.resetArmed = false;
       const reset = this.add
-        .text(GAME_W / 2, 1110, '처음부터 시작', {
+        .text(GAME_W / 2, 1146, '처음부터 시작', {
           fontFamily: FONT,
           fontSize: '22px',
           color: '#6e6390'
