@@ -11,7 +11,7 @@
 | 2 | 플레이 동영상 | YouTube, **30~60초**, 실제 플레이 화면 | 🔴 촬영 필요 (아래 가이드) |
 | 3 | 게임 소개 및 설명 문서 | PDF | 🟡 원고 완성 (`GAME_INTRO.md` → pdf), 영상 링크만 기입 |
 | 4 | AI 활용 기술 문서 | PDF | 🟢 원고 완성 (`AI_TECH_DOC.md` → pdf) |
-| 5 | 팀원 롤 기술서 | PDF — **팀 참가이므로 필수** | 🟡 작성됨 (`TEAM_ROLES.md`) — 팀명·팀원 성명만 기입 |
+| 5 | 팀원 롤 기술서 | PDF — **팀 참가이므로 필수** | 🟢 완성 (팀 뇌지컬연구소: 성지은·장우진) |
 | — | 참가 신청서 | 구글폼 | 🔴 직접 제출: https://docs.google.com/forms/d/e/1FAIpQLSdb2ifNzAdJpOYrRUCFA0DDQ7S56zTfcUsm79MI3aNTKOgsGg/viewform |
 
 ## 규정 요점 (원문 발췌 요약)
