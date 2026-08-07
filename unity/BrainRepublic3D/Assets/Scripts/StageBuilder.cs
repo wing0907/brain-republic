@@ -30,10 +30,13 @@ namespace BrainRepublic
             {
                 var p = def.platforms[i];
                 float x = p.x, z = p.y, width = Mathf.Max(3f, p.z);
+                // 세그먼트마다 높이를 2cm씩 어긋나게 — 겹친 면의 Z-파이팅(화면 깨짐) 방지
+                float segY = -0.5f - i * 0.02f;
+                float topY = segY + 0.5f;
                 var seg = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 seg.name = "seg" + i;
                 seg.transform.SetParent(root.transform);
-                seg.transform.position = new Vector3(x, -0.5f, z);
+                seg.transform.position = new Vector3(x, segY, z);
                 seg.transform.localScale = new Vector3(width, 1f, SegLen);
                 seg.GetComponent<Renderer>().sharedMaterial = ground;
                 if (ice)
@@ -41,18 +44,17 @@ namespace BrainRepublic
                     var pm = new PhysicsMaterial("ice") { dynamicFriction = def.friction, staticFriction = def.friction, frictionCombine = PhysicsMaterialCombine.Minimum };
                     seg.GetComponent<Collider>().material = pm;
                 }
-                // 가장자리 발광 레일 (뇌 주름 협곡 느낌 + 시인성)
+                // 가장자리 발광 레일 = 실제 벽 (콜라이더 유지 — 구슬이 뚫고 나가지 않게)
                 foreach (var side in new[] { -1f, 1f })
                 {
                     var rail = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     rail.name = "rail";
                     rail.transform.SetParent(seg.transform.parent);
-                    rail.transform.position = new Vector3(x + side * (width / 2f + 0.15f), -0.1f, z);
-                    rail.transform.localScale = new Vector3(0.3f, 0.8f, SegLen);
+                    rail.transform.position = new Vector3(x + side * (width / 2f + 0.18f), topY + 0.25f, z);
+                    rail.transform.localScale = new Vector3(0.35f, 1.4f, SegLen);
                     rail.GetComponent<Renderer>().sharedMaterial = groundEdge;
-                    Object.Destroy(rail.GetComponent<Collider>());
                 }
-                checkpoints[i] = new Vector3(x, 1.2f, z - SegLen / 2f + 1.5f);
+                checkpoints[i] = new Vector3(x, topY + 1.2f, z - SegLen / 2f + 1.5f);
             }
 
             // 기억 조각

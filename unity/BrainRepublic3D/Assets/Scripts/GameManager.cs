@@ -71,12 +71,45 @@ namespace BrainRepublic
             Camera.main.GetComponent<CameraFollow>().target = player.transform;
             Camera.main.transform.position = player.transform.position + new Vector3(0, 7.5f, -8.5f);
 
-            ui.ShowIntro(def, () =>
+            if (skipIntroOnce)
             {
+                skipIntroOnce = false;
                 Playing = true;
                 ui.ShowHud(def);
-                sfx.Play(Sfx.Kind.Start);
-            });
+            }
+            else
+            {
+                ui.ShowIntro(def, () =>
+                {
+                    Playing = true;
+                    ui.ShowHud(def);
+                    sfx.Play(Sfx.Kind.Start);
+                });
+            }
+        }
+
+        // ---- 자동 검증 훅 (헤드리스 QA에서 SendMessage로 호출) ----
+        bool skipIntroOnce;
+
+        public void DebugPlayStage(int idx)
+        {
+            skipIntroOnce = true;
+            StartStage(idx);
+        }
+
+        public void DebugPush(string xz)
+        {
+            if (player == null) return;
+            var parts = xz.Split(',');
+            var rb = player.GetComponent<Rigidbody>();
+            rb.linearVelocity = new Vector3(float.Parse(parts[0]), 0, float.Parse(parts[1]));
+        }
+
+        public void DebugReport()
+        {
+            if (player == null) { Debug.Log("[REPORT] no player"); return; }
+            var p = player.transform.position;
+            Debug.Log($"[REPORT] pos {p.x:F2},{p.y:F2},{p.z:F2} crystals {crystals}");
         }
 
         void Update()

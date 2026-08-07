@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_W, GAME_H, STORAGE_KEY } from '../config.js';
 import { BUREAUS } from '../data/bureaus.js';
-import { unlock, sfx } from '../systems/audio.js';
+import { unlock, sfx, music } from '../systems/audio.js';
 import { resetState } from '../systems/save.js';
 
 const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
@@ -85,6 +85,7 @@ export class TitleScene extends Phaser.Scene {
     btn.on('pointerdown', () => {
       unlock();
       sfx.start();
+      music.start();
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.time.delayedCall(320, () => this.scene.start('Map'));
     });
