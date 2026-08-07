@@ -113,7 +113,14 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(GAME_W / 2, 1200, 'NAN 2026 — NHN Game × AI Hackathon 출품작', {
+      .text(GAME_W / 2, 1176, '원작·기획  성지은', {
+        fontFamily: FONT,
+        fontSize: '22px',
+        color: '#8a7fa8'
+      })
+      .setOrigin(0.5);
+    this.add
+      .text(GAME_W / 2, 1212, 'NAN 2026 — NHN Game × AI Hackathon 출품작', {
         fontFamily: FONT,
         fontSize: '20px',
         color: '#6e6390'
