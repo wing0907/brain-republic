@@ -39,6 +39,8 @@ npm run build   # dist/ 프로덕션 빌드
 - 엔진: [Phaser 3](https://phaser.io/) + Vite
 - 그래픽/사운드: 외부 에셋 없이 전량 프로시저럴 생성(코드 드로잉 + WebAudio 신스)
 - AI 활용: 기획·코드·밸런싱 전 과정을 Claude Code로 진행 — 상세 내역은 `docs/AI_TECH_DOC.md`
+- 데모 세이브(시연용): `?demo=doom`(방치 소멸 연출) · `?demo=rich`(후반부) ·
+  `?demo=ending`(엔딩) · `?demo=fresh`(초기화)
 
 ## 저장소 구조
 

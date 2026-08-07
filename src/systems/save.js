@@ -118,17 +118,20 @@ function applyOffline(state) {
   const deaths = [];
   for (const b of BUREAUS) {
     const s = state.bureaus[b.id];
-    s.hunger = Math.max(0, s.hunger - OFFLINE_HUNGER_PER_H * decayH);
-    s.energy = Math.max(0, s.energy - OFFLINE_ENERGY_PER_H * decayH);
-    // 굶고 지친 시간만큼 인지도가 깎인다 (근사: 남는 감쇠 시간 비례)
+    const h0 = s.hunger;
+    const e0 = s.energy;
+    const f0 = s.fame;
+    s.hunger = Math.max(0, h0 - OFFLINE_HUNGER_PER_H * decayH);
+    s.energy = Math.max(0, e0 - OFFLINE_ENERGY_PER_H * decayH);
+    // 배부름·컨디션이 (이탈 시점 값 기준으로) 바닥난 뒤부터 인지도가 깎인다
     const starvedH = Math.max(
       0,
-      decayH - Math.min(s.hunger / OFFLINE_HUNGER_PER_H, s.energy / OFFLINE_ENERGY_PER_H)
+      decayH - Math.min(h0 / OFFLINE_HUNGER_PER_H, e0 / OFFLINE_ENERGY_PER_H)
     );
-    if (starvedH > 0) s.fame = Math.max(0, s.fame - OFFLINE_FAME_PER_H * starvedH);
+    if (starvedH > 0) s.fame = Math.max(0, f0 - OFFLINE_FAME_PER_H * starvedH);
 
-    // 소멸 판정: 인지도가 0까지 떨어지고도 한참 방치된 경우
-    const famelessH = s.fame <= 0 ? starvedH - s.fame / OFFLINE_FAME_PER_H : 0;
+    // 소멸 판정: 인지도가 0에 도달한 이후로 흐른 시간
+    const famelessH = s.fame <= 0 ? starvedH - f0 / OFFLINE_FAME_PER_H : 0;
     if (s.fame <= 0 && famelessH >= DEATH_OFFLINE_HOURS) {
       deaths.push(b.id);
       s.level = 1;
