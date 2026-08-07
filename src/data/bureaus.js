@@ -11,6 +11,7 @@ export const BUREAUS = [
     accent: 0xf3d9a4,
     interaction: 'mash',
     verb: '연타로 서고 뒤지기!',
+    keeper: { name: '나이테 국장', trait: '몸에 나이테 무늬, 귀가 큰 종족 — 오래된 서고의 수호자' },
     crisis: [
       { dept: '기억보관팀', line: '지원동기 서류가 없습니다!' },
       { dept: '단기기억팀', line: '방금 들은 질문을 분실했습니다!' },
@@ -26,6 +27,7 @@ export const BUREAUS = [
     accent: 0xffb3a7,
     interaction: 'hold',
     verb: '길게 눌러 심호흡!',
+    keeper: { name: '덩쿨 국장', trait: '덩굴 힘줄 무늬, 자극에 반응하는 촉수 종족 — 신경망의 관리자' },
     crisis: [
       { dept: '손발저림관리팀', line: '손발 저림 수치 폭주!' },
       { dept: '심박조절팀', line: '심박수 140 돌파!' },
@@ -41,6 +43,7 @@ export const BUREAUS = [
     accent: 0xa8f0e6,
     interaction: 'hold',
     verb: '길게 눌러 게이트 보강!',
+    keeper: { name: '이슬 국장', trait: '반투명한 피부색이 감정 따라 변하는 종족 — 웅덩이의 조율사' },
     crisis: [
       { dept: '눈물참기훈련팀', line: '눈물 게이트 붕괴 직전!' },
       { dept: '표정관리팀', line: '입꼬리 제어 불능!' },
@@ -56,6 +59,7 @@ export const BUREAUS = [
     accent: 0xe0b8ff,
     interaction: 'swipe',
     verb: '스와이프로 밀어내기!',
+    keeper: { name: '반짝 국장', trait: '충동 강도에 따라 몸의 돌기가 깜빡이는 종족 — 네온 번화가의 보안관' },
     crisis: [
       { dept: '핸드폰중독관리팀', line: '진동 확인 충동 유입!' },
       { dept: '도망가고싶음억제팀', line: '퇴장 충동 감지!' },
@@ -71,6 +75,7 @@ export const BUREAUS = [
     accent: 0xffe9a0,
     interaction: 'choice',
     verb: '올바른 단어를 결재!',
+    keeper: { name: '안테나 국장', trait: '안테나처럼 솟은 귀를 가진 종족 — 나무 안테나탑의 송출 책임자' },
     crisis: [
       { dept: '말실수팀', line: '발송 직전! 올바른 파일은?', good: '성실한 지원자', bad: '부실한 지원자' },
       { dept: '존댓말검수팀', line: '어미 오류 감지! 올바른 결재는?', good: '하겠습니다', bad: '할게염' },
@@ -86,6 +91,7 @@ export const BUREAUS = [
     accent: 0xb9c2ff,
     interaction: 'swipe',
     verb: '스와이프로 구름 걷어내기!',
+    keeper: { name: '몽글 국장', trait: '반딧불이처럼 빛나는 점을 가진 반투명 종족 — 안개 구름 지대의 감독' },
     crisis: [
       { dept: '꿈제작팀', line: '공상 구름 무단 상영 시작!' },
       { dept: '점심메뉴상상팀', line: '갑자기 국밥 생각 침투!' },

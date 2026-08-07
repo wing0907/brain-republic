@@ -2,8 +2,12 @@ import Phaser from 'phaser';
 import { GAME_W, GAME_H } from './config.js';
 import { BootScene } from './scenes/BootScene.js';
 import { TitleScene } from './scenes/TitleScene.js';
-import { GameScene } from './scenes/GameScene.js';
-import { ResultScene } from './scenes/ResultScene.js';
+import { MapScene } from './scenes/MapScene.js';
+import { BureauScene } from './scenes/BureauScene.js';
+import { EpisodeScene } from './scenes/EpisodeScene.js';
+import { PuzzleScene } from './scenes/PuzzleScene.js';
+import { CrisisMiniScene } from './scenes/CrisisMiniScene.js';
+import { EndingScene } from './scenes/EndingScene.js';
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -16,9 +20,9 @@ const game = new Phaser.Game({
     height: GAME_H
   },
   input: {
-    activePointers: 3 // 멀티터치 (동시 카드 대응)
+    activePointers: 3
   },
-  scene: [BootScene, TitleScene, GameScene, ResultScene]
+  scene: [BootScene, TitleScene, MapScene, BureauScene, EpisodeScene, PuzzleScene, CrisisMiniScene, EndingScene]
 });
 
 // 테스트/디버그 훅 (스모크 테스트에서 씬 제어에 사용)
