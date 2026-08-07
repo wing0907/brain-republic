@@ -149,5 +149,44 @@ export const sfx = {
   // 위독 경고
   danger() {
     tone({ freq: 233, type: 'sawtooth', dur: 0.4, vol: 0.16, slide: -60 });
+    tone({ freq: 220, type: 'sawtooth', dur: 0.4, at: 0.45, vol: 0.14, slide: -60 });
+  },
+  // UI 클릭 (모든 버튼 공통)
+  ui() {
+    tone({ freq: 620, type: 'sine', dur: 0.04, vol: 0.09 });
+    tone({ freq: 930, type: 'sine', dur: 0.05, at: 0.025, vol: 0.07 });
+  },
+  // 먹이기: 냠냠 (저음 노이즈 촙 2회)
+  munch() {
+    noise({ dur: 0.07, vol: 0.24, lowpass: 900 });
+    tone({ freq: 190, type: 'sine', dur: 0.07, vol: 0.16, slide: -40 });
+    noise({ dur: 0.06, at: 0.12, vol: 0.2, lowpass: 700 });
+    tone({ freq: 165, type: 'sine', dur: 0.07, at: 0.12, vol: 0.14, slide: -40 });
+  },
+  // 재우기: 자장가 (하강 3음 + 부드러운 숨)
+  lull() {
+    [523, 440, 349].forEach((f, i) =>
+      tone({ freq: f, type: 'sine', dur: 0.22, at: i * 0.16, vol: 0.12 })
+    );
+    noise({ dur: 0.4, at: 0.5, vol: 0.05, lowpass: 1200 });
+  },
+  // 퍼즐 조각 집기
+  pick() {
+    tone({ freq: 480, type: 'triangle', dur: 0.06, vol: 0.11, slide: 180 });
+  },
+  // 조각 잘못 놓기 (둔탁)
+  thud() {
+    tone({ freq: 210, type: 'square', dur: 0.08, vol: 0.12, slide: -70 });
+    noise({ dur: 0.06, vol: 0.1, lowpass: 800 });
+  },
+  // 다이아 획득 (반짝 아르페지오)
+  gem() {
+    [1046, 1318, 1568, 2093].forEach((f, i) =>
+      tone({ freq: f, type: 'triangle', dur: 0.12, at: i * 0.07, vol: 0.12 })
+    );
+  },
+  // 모달/화면 전환 휘익
+  whoosh() {
+    noise({ dur: 0.2, vol: 0.1, lowpass: 2200 });
   }
 };

@@ -127,6 +127,7 @@ export class EpisodeScene extends Phaser.Scene {
       title = '에피소드 완료!';
       body = this.episode.outro;
       sfx.fanfare();
+      this.time.delayedCall(550, () => sfx.gem()); // 다이아 보상 반짝임
       // 국 완성 판정
       const bs = this.state.bureaus[this.bureauId];
       if (!bs.complete && isBureauComplete(this.state, this.bureauId, MAX_LEVEL)) {
@@ -182,6 +183,9 @@ export class EpisodeScene extends Phaser.Scene {
         color: '#3a1c05'
       })
       .setOrigin(0.5);
-    btn.on('pointerdown', () => this.scene.start('Bureau', { bureauId: this.bureauId }));
+    btn.on('pointerdown', () => {
+      sfx.ui();
+      this.scene.start('Bureau', { bureauId: this.bureauId });
+    });
   }
 }

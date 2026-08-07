@@ -113,6 +113,9 @@ export class EndingScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(11);
-    btn.on('pointerdown', () => this.scene.start('Map'));
+    btn.on('pointerdown', () => {
+      sfx.ui();
+      this.scene.start('Map');
+    });
   }
 }

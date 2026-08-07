@@ -151,12 +151,22 @@ export class MapScene extends Phaser.Scene {
   }
 
   refreshBuildings() {
+    if (!this.prevCritical) {
+      // 최초 렌더: 현재 상태를 기준으로 삼아 입장 즉시 경보가 울리지 않게 함
+      this.prevCritical = {};
+      for (const b of BUREAUS) this.prevCritical[b.id] = this.state.bureaus[b.id].fame <= 0;
+    }
     for (const b of BUREAUS) {
       const s = this.state.bureaus[b.id];
       const v = this.buildings[b.id];
       const key = `bld-${b.id}-${s.level}`;
       if (v.img.texture.key !== key) v.img.setTexture(key);
       const critical = s.fame <= 0;
+      if (critical && !this.prevCritical[b.id]) {
+        sfx.danger();
+        this.toast(`⚠ ${b.keeper.name}(${b.name})이 위독합니다! 서둘러 돌봐주세요!`);
+      }
+      this.prevCritical[b.id] = critical;
       v.img.setTint(critical ? 0x666677 : 0xffffff);
       v.label.setText(
         `${b.short} Lv.${s.level}${s.complete ? ' ★' : ''}${critical ? ' 위독!' : ''}`
@@ -242,7 +252,10 @@ export class MapScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(3002);
-    boost.on('pointerdown', () => this.diamondBoost());
+    boost.on('pointerdown', () => {
+      sfx.ui();
+      this.diamondBoost();
+    });
 
     const help = this.add
       .image(530, y + 16, 'button-dark')
@@ -258,7 +271,10 @@ export class MapScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(3002);
-    help.on('pointerdown', () => this.showTutorial());
+    help.on('pointerdown', () => {
+      sfx.ui();
+      this.showTutorial();
+    });
   }
 
   diamondBoost() {
@@ -451,6 +467,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   modal(title, body) {
+    sfx.whoosh();
     const dim = this.add
       .rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x000000, 0.6)
       .setDepth(6000)
@@ -505,6 +522,7 @@ export class MapScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6003);
     btn.on('pointerdown', () => {
+      sfx.ui();
       [dim, panel, t1, t2, btn, bt].forEach((o) => o.destroy());
     });
   }
