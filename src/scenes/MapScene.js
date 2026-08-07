@@ -18,7 +18,7 @@ import {
 } from '../config.js';
 import { BUREAUS, BUREAU_BY_ID } from '../data/bureaus.js';
 import { loadState, saveState, incomePerSec, tickRealtime } from '../systems/save.js';
-import { sfx } from '../systems/audio.js';
+import { sfx, setMuted, isMuted } from '../systems/audio.js';
 
 const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
 
@@ -241,6 +241,17 @@ export class MapScene extends Phaser.Scene {
       .text(40, 96, '', { fontFamily: FONT, fontSize: '24px', color: '#d8cfec' })
       .setOrigin(0, 0.5)
       .setDepth(3001);
+
+    // 사운드 토글
+    const snd = this.add
+      .text(GAME_W - 30, 176, isMuted() ? '🔇' : '🔊', { fontSize: '34px' })
+      .setOrigin(1, 0.5)
+      .setDepth(3001)
+      .setInteractive({ useHandCursor: true });
+    snd.on('pointerdown', () => {
+      setMuted(!isMuted());
+      snd.setText(isMuted() ? '🔇' : '🔊');
+    });
     this.healthText = this.add
       .text(GAME_W - 40, 96, '', { fontFamily: FONT, fontSize: '24px', color: '#d8cfec' })
       .setOrigin(1, 0.5)
@@ -568,10 +579,12 @@ export class MapScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(6003);
-    btn.on('pointerdown', () => {
+    const close = () => {
       sfx.ui();
       [dim, panel, t1, t2, btn, bt].forEach((o) => o.destroy());
-    });
+    };
+    btn.on('pointerdown', close);
+    dim.on('pointerdown', close); // 바깥 영역 탭으로도 닫기
   }
 }
 

@@ -106,6 +106,7 @@ namespace BrainRepublic
 
         public void ShowHud(StageDef def)
         {
+            ClearOverlay(); // 디버그 직행 등 어떤 경로로 와도 오버레이 잔존 방지
             HideHud();
             hudPanel = new GameObject("HUD", typeof(RectTransform));
             hudPanel.transform.SetParent(root, false);

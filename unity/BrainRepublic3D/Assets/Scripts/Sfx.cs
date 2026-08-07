@@ -24,6 +24,18 @@ namespace BrainRepublic
 
             if (Camera.main != null && Camera.main.GetComponent<AudioListener>() == null)
                 Camera.main.gameObject.AddComponent<AudioListener>();
+
+            // 테마 BGM 루프 (프로시저럴 생성 WAV) — WebGL은 첫 입력 후 소리가 열린다
+            var bgm = Resources.Load<AudioClip>("Sfx/bgm");
+            if (bgm != null)
+            {
+                var bgmSrc = gameObject.AddComponent<AudioSource>();
+                bgmSrc.clip = bgm;
+                bgmSrc.loop = true;
+                bgmSrc.volume = 0.3f;
+                bgmSrc.playOnAwake = false;
+                bgmSrc.Play();
+            }
         }
 
         public void Play(Kind k)

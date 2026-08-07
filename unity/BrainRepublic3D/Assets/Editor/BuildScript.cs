@@ -75,6 +75,8 @@ namespace BrainRepublic.EditorTools
                 var s = File.ReadAllText(html);
                 if (!s.Contains("name=\"viewport\""))
                     s = s.Replace("<head>", "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover\">");
+                // 자동 QA용 인스턴스 노출 (SendMessage 호출 경로)
+                s = s.Replace("}).then((unityInstance) => {", "}).then((unityInstance) => { window.unityInstance = unityInstance;");
                 const string css = "<style>html,body{margin:0;padding:0;background:#12081f;height:100%;overflow:hidden}" +
                     "#unity-container{position:fixed;inset:0;width:100vw!important;height:100vh!important;display:flex;align-items:center;justify-content:center}" +
                     "#unity-canvas{max-width:100vw!important;max-height:100vh!important;width:auto!important;height:100%!important;background:#12081f}" +
@@ -105,8 +107,66 @@ namespace BrainRepublic.EditorTools
             Write("hit", Noise(0.15f, 900f));
             Write("fall", Slide(440f, 110f, 0.4f));
             Write("clear", Sequence(new[] { (523f, 0.14f), (659f, 0.14f), (784f, 0.14f), (1046f, 0.3f) }));
+            Write("bgm", Music());
             AssetDatabase.Refresh();
-            Debug.Log("[SfxGen] wav files generated");
+            Debug.Log("[SfxGen] wav files generated (incl. bgm loop)");
+        }
+
+        // 테마 BGM: 따뜻한 노을빛 로파이 루프 (C–Am–F–G ×2, 80bpm, 24초).
+        // 패드(사인 3화음) + 베이스 + 아르페지오(삼각파) + 옅은 해트 노이즈.
+        static float[] Music()
+        {
+            const float bpm = 80f;
+            float beat = 60f / bpm;
+            int bars = 8;
+            int len = (int)(bars * 4 * beat * SR);
+            var mix = new float[len];
+
+            // 코드 진행 (주파수, 낮은 옥타브 기준): C E G / A C E / F A C / G B D
+            float[][] chords =
+            {
+                new[] { 261.6f, 329.6f, 392.0f },
+                new[] { 220.0f, 261.6f, 329.6f },
+                new[] { 174.6f, 220.0f, 261.6f },
+                new[] { 196.0f, 246.9f, 293.7f }
+            };
+
+            var rnd = new System.Random(42);
+            float hatPrev = 0;
+            for (int i = 0; i < len; i++)
+            {
+                float t = (float)i / SR;
+                int bar = (int)(t / (4 * beat)) % 8;
+                var chord = chords[bar % 4];
+                float barT = t % (4 * beat);
+
+                // 패드: 부드러운 어택의 3화음
+                float pad = 0;
+                foreach (var f in chord)
+                    pad += Mathf.Sin(2 * Mathf.PI * f * t);
+                float padEnv = Mathf.Min(1f, barT / 0.4f) * (1f - Mathf.Max(0, (barT - 4 * beat + 0.5f)) / 0.5f);
+                pad *= 0.1f * Mathf.Clamp01(padEnv);
+
+                // 베이스: 1·3박 루트 (한 옥타브 아래)
+                float beatT = barT % (2 * beat);
+                float bass = Mathf.Sin(2 * Mathf.PI * (chord[0] / 2f) * t) * Mathf.Exp(-beatT * 2.2f) * 0.22f;
+
+                // 아르페지오: 8분음표 삼각파 (한 옥타브 위)
+                int eighth = (int)(barT / (beat / 2f));
+                float arpF = chord[eighth % 3] * 2f;
+                float arpT = barT % (beat / 2f);
+                float tri = Mathf.PingPong(arpF * t * 2f, 1f) * 2f - 1f;
+                float arp = tri * Mathf.Exp(-arpT * 5f) * 0.10f;
+
+                // 해트: 오프비트 옅은 노이즈
+                float hatT = (barT + beat / 2f) % beat;
+                float white = (float)(rnd.NextDouble() * 2 - 1);
+                hatPrev = hatPrev + 0.55f * (white - hatPrev);
+                float hat = (white - hatPrev) * Mathf.Exp(-hatT * 28f) * 0.09f;
+
+                mix[i] = pad + bass + arp + hat;
+            }
+            return mix;
         }
 
         static float[] Sequence((float freq, float dur)[] notes)

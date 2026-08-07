@@ -190,3 +190,57 @@ export const sfx = {
     noise({ dur: 0.2, vol: 0.1, lowpass: 2200 });
   }
 };
+
+// ---- 배경음악: 따뜻한 노을빛 로파이 루프 (C–Am–F–G, 80bpm) ----
+// 외부 음원 없이 룩어헤드 스케줄러로 실시간 합성. unlock() 이후 start() 호출.
+const BPM = 80;
+const EIGHTH = 60 / BPM / 2;
+const CHORDS = [
+  [261.6, 329.6, 392.0], // C
+  [220.0, 261.6, 329.6], // Am
+  [174.6, 220.0, 261.6], // F
+  [196.0, 246.9, 293.7]  // G
+];
+
+let musicTimer = null;
+let nextTime = 0;
+let stepIdx = 0;
+
+function scheduleStep(s, t) {
+  const at = Math.max(0, t - ctx.currentTime);
+  const bar = Math.floor(s / 8) % 4;
+  const chord = CHORDS[bar];
+  const inBar = s % 8;
+  if (inBar === 0) {
+    // 패드: 마디 전체를 감싸는 3화음
+    for (const f of chord) tone({ freq: f, type: 'sine', dur: EIGHTH * 8, at, vol: 0.045 });
+  }
+  if (inBar === 0 || inBar === 4) {
+    tone({ freq: chord[0] / 2, type: 'sine', dur: 0.5, at, vol: 0.13 });
+  }
+  // 아르페지오 (한 옥타브 위 삼각파)
+  tone({ freq: chord[s % 3] * 2, type: 'triangle', dur: 0.16, at, vol: 0.045 });
+  // 오프비트 해트
+  if (inBar % 2 === 1) noise({ dur: 0.03, at, vol: 0.028, lowpass: 6000 });
+}
+
+export const music = {
+  start() {
+    if (!ctx || musicTimer) return;
+    nextTime = ctx.currentTime + 0.15;
+    stepIdx = 0;
+    musicTimer = setInterval(() => {
+      while (nextTime < ctx.currentTime + 0.4) {
+        scheduleStep(stepIdx, nextTime);
+        nextTime += EIGHTH;
+        stepIdx = (stepIdx + 1) % 64;
+      }
+    }, 120);
+  },
+  stop() {
+    if (musicTimer) {
+      clearInterval(musicTimer);
+      musicTimer = null;
+    }
+  }
+};
