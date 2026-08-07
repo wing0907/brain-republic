@@ -120,5 +120,34 @@ export const sfx = {
   // 멘탈 붕괴
   gameover() {
     [392, 330, 262, 196].forEach((f, i) => tone({ freq: f, type: 'sawtooth', dur: 0.3, at: i * 0.18, vol: 0.18 }));
+  },
+  // ---- v2 왕국 키우기 ----
+  // 코인 획득
+  coin() {
+    tone({ freq: 990, type: 'triangle', dur: 0.06, vol: 0.12 });
+    tone({ freq: 1320, type: 'triangle', dur: 0.1, at: 0.06, vol: 0.12 });
+  },
+  // 먹이기/재우기 팝
+  pop() {
+    tone({ freq: 520, type: 'sine', dur: 0.08, vol: 0.18, slide: 240 });
+  },
+  // 레벨업/건물 성장
+  levelup() {
+    [392, 494, 587, 784].forEach((f, i) => tone({ freq: f, type: 'triangle', dur: 0.16, at: i * 0.09, vol: 0.18 }));
+    noise({ dur: 0.35, at: 0.36, vol: 0.08, lowpass: 5000 });
+  },
+  // 퍼즐 조각 스냅
+  snap() {
+    tone({ freq: 700, type: 'square', dur: 0.05, vol: 0.1 });
+    tone({ freq: 1050, type: 'sine', dur: 0.07, at: 0.04, vol: 0.1 });
+  },
+  // 돌발상황 경보
+  alert() {
+    tone({ freq: 740, type: 'square', dur: 0.1, vol: 0.13 });
+    tone({ freq: 740, type: 'square', dur: 0.1, at: 0.16, vol: 0.13 });
+  },
+  // 위독 경고
+  danger() {
+    tone({ freq: 233, type: 'sawtooth', dur: 0.4, vol: 0.16, slide: -60 });
   }
 };
