@@ -1,0 +1,7 @@
+<linker>
+  <!-- 전 오브젝트가 런타임 생성이라 정적 분석에 안 걸림 — 엔진 모듈 보존 필수 -->
+  <assembly fullname="UnityEngine.PhysicsModule" preserve="all"/>
+  <assembly fullname="UnityEngine.AudioModule" preserve="all"/>
+  <assembly fullname="UnityEngine.UIModule" preserve="all"/>
+  <assembly fullname="UnityEngine.TextRenderingModule" preserve="all"/>
+</linker>

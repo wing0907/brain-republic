@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist",
     "docs": "node scripts/make-pdfs.mjs",
-    "deploy:unity": "gh-pages -d unity-build --dest unity --add"
+    "deploy:unity": "gh-pages -d unity/unity-build --dest unity --add"
   },
   "dependencies": {
     "phaser": "^3.90.0"

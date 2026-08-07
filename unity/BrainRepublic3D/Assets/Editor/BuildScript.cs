@@ -14,6 +14,14 @@ namespace BrainRepublic.EditorTools
         {
             SfxGen.GenerateAll();
 
+            // 셰이더 스트리핑 방지: 런타임 생성 머티리얼이 쓰는 셰이더를
+            // Resources 내 에셋으로 참조시켜 빌드에 강제 포함한다.
+            Directory.CreateDirectory("Assets/Resources/ShaderRefs");
+            CreateRefMat("Standard", "Assets/Resources/ShaderRefs/std.mat");
+            CreateRefMat("UI/Default", "Assets/Resources/ShaderRefs/ui.mat");
+            CreateRefMat("GUI/Text Shader", "Assets/Resources/ShaderRefs/text.mat");
+            CreateRefMat("Skybox/Procedural", "Assets/Resources/ShaderRefs/sky.mat");
+
             // 부팅 씬: GameManager 하나가 전부를 조립한다
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
             var go = new GameObject("Game");
@@ -30,22 +38,51 @@ namespace BrainRepublic.EditorTools
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true; // GitHub Pages는 Content-Encoding 미설정
             PlayerSettings.WebGL.memorySize = 256;
+            PlayerSettings.stripEngineCode = false; // 런타임 생성 위주라 모듈 스트리핑 금지
             PlayerSettings.WebGL.template = "APPLICATION:Default";
             PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.WebGL, ScriptingImplementation.IL2CPP);
             AssetDatabase.SaveAssets();
             Debug.Log("[BuildScript] Setup done");
         }
 
+        static void CreateRefMat(string shaderName, string path)
+        {
+            var sh = Shader.Find(shaderName);
+            if (sh == null) { Debug.LogWarning("[BuildScript] shader not found: " + shaderName); return; }
+            if (AssetDatabase.LoadAssetAtPath<Material>(path) != null) return;
+            AssetDatabase.CreateAsset(new Material(sh), path);
+        }
+
         public static void BuildWebGL()
         {
+            var outDir = Path.Combine(Directory.GetParent(Application.dataPath).Parent.FullName, "unity-build");
             var report = BuildPipeline.BuildPlayer(
                 new[] { "Assets/Scenes/Main.unity" },
-                Path.Combine(Directory.GetParent(Application.dataPath).Parent.FullName, "unity-build"),
+                outDir,
                 BuildTarget.WebGL,
                 BuildOptions.None);
             Debug.Log($"[BuildScript] Build result: {report.summary.result}, size {report.summary.totalSize / (1024 * 1024)}MB, errors {report.summary.totalErrors}");
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
                 EditorApplication.Exit(1);
+                return;
+            }
+
+            // 모바일/데스크톱 공통 반응형 캔버스 CSS 주입 (기본 템플릿은 고정 크기)
+            var html = Path.Combine(outDir, "index.html");
+            if (File.Exists(html))
+            {
+                var s = File.ReadAllText(html);
+                if (!s.Contains("name=\"viewport\""))
+                    s = s.Replace("<head>", "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover\">");
+                const string css = "<style>html,body{margin:0;padding:0;background:#12081f;height:100%;overflow:hidden}" +
+                    "#unity-container{position:fixed;inset:0;width:100vw!important;height:100vh!important;display:flex;align-items:center;justify-content:center}" +
+                    "#unity-canvas{max-width:100vw!important;max-height:100vh!important;width:auto!important;height:100%!important;background:#12081f}" +
+                    "#unity-footer{display:none}</style></head>";
+                s = s.Replace("</head>", css);
+                File.WriteAllText(html, s);
+                Debug.Log("[BuildScript] index.html responsive patch applied");
+            }
         }
 
         public static void SetupAndBuild()
