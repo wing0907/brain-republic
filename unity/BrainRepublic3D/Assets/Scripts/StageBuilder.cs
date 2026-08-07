@@ -21,8 +21,9 @@ namespace BrainRepublic
             RenderSettings.fogDensity = def.fogDensity;
             RenderSettings.ambientLight = Color.Lerp(def.fog, Color.white, 0.35f);
 
-            var ground = MatSolid(Color.Lerp(def.theme, Color.black, 0.55f));
-            var groundEdge = MatEmissive(def.theme, 0.9f);
+            // 홀로그램 룩: 반투명 그리드 발판 + 발광 엣지 레일
+            var ground = MatHolo(def.theme);
+            var groundEdge = MatEmissive(def.theme, 1.6f);
             var ice = def.friction < 1f;
 
             checkpoints = new Vector3[def.platforms.Length];
@@ -44,14 +45,16 @@ namespace BrainRepublic
                     var pm = new PhysicsMaterial("ice") { dynamicFriction = def.friction, staticFriction = def.friction, frictionCombine = PhysicsMaterialCombine.Minimum };
                     seg.GetComponent<Collider>().material = pm;
                 }
-                // 가장자리 발광 레일 = 실제 벽 (콜라이더 유지 — 구슬이 뚫고 나가지 않게)
+                // 가장자리 발광 레일 = 실제 벽 (콜라이더 유지).
+                // 단, 이음새 구간(앞뒤 2.5)은 벽을 비워 좌우로 어긋난 다음 발판으로의
+                // 진입을 막지 않는다 — EP3 "무조건 죽는" 설계의 원인 수정.
                 foreach (var side in new[] { -1f, 1f })
                 {
                     var rail = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     rail.name = "rail";
                     rail.transform.SetParent(seg.transform.parent);
                     rail.transform.position = new Vector3(x + side * (width / 2f + 0.18f), topY + 0.25f, z);
-                    rail.transform.localScale = new Vector3(0.35f, 1.4f, SegLen);
+                    rail.transform.localScale = new Vector3(0.35f, 1.4f, SegLen - 5f);
                     rail.GetComponent<Renderer>().sharedMaterial = groundEdge;
                 }
                 checkpoints[i] = new Vector3(x, topY + 1.2f, z - SegLen / 2f + 1.5f);
@@ -143,6 +146,54 @@ namespace BrainRepublic
 
         // ---- 머티리얼 유틸 (전량 코드 생성 — 외부 에셋 0) ----
 
+        static Texture2D holoTex;
+
+        // 홀로그램 그리드 텍스처 (128², 16px 격자)
+        static Texture2D HoloTexture()
+        {
+            if (holoTex != null) return holoTex;
+            const int S = 128;
+            holoTex = new Texture2D(S, S, TextureFormat.RGBA32, false);
+            var px = new Color[S * S];
+            for (int y = 0; y < S; y++)
+            {
+                for (int x = 0; x < S; x++)
+                {
+                    // RGB에도 격자를 인코딩 — 에미션 맵으로 쓰면 라인만 발광한다
+                    bool line = x % 16 == 0 || y % 16 == 0;
+                    px[y * S + x] = line
+                        ? new Color(1f, 1f, 1f, 0.9f)
+                        : new Color(0.06f, 0.07f, 0.1f, 0.4f);
+                }
+            }
+            holoTex.SetPixels(px);
+            holoTex.wrapMode = TextureWrapMode.Repeat;
+            holoTex.Apply();
+            return holoTex;
+        }
+
+        // 반투명 홀로그램 발판 머티리얼 — 격자 라인만 발광, 판은 은은하게 비침
+        public static Material MatHolo(Color c)
+        {
+            var m = new Material(Shader.Find("Standard"));
+            m.mainTexture = HoloTexture();
+            m.mainTextureScale = new Vector2(3f, 5f);
+            m.color = new Color(c.r * 0.5f, c.g * 0.5f, c.b * 0.5f, 0.5f);
+            SetTransparentMode(m);
+            m.EnableKeyword("_EMISSION");
+            m.SetTexture("_EmissionMap", HoloTexture());
+            m.SetTextureScale("_EmissionMap", new Vector2(3f, 5f));
+            m.SetColor("_EmissionColor", c * 1.1f);
+            return m;
+        }
+
+        // 트레일용 머티리얼
+        public static Material TrailMat()
+        {
+            var sh = Shader.Find("Sprites/Default");
+            return new Material(sh != null ? sh : Shader.Find("Standard"));
+        }
+
         public static Material MatSolid(Color c)
         {
             var m = new Material(Shader.Find("Standard"));
@@ -157,6 +208,16 @@ namespace BrainRepublic
             m.EnableKeyword("_EMISSION");
             m.SetColor("_EmissionColor", c * intensity);
             return m;
+        }
+
+        static void SetTransparentMode(Material m)
+        {
+            m.SetFloat("_Mode", 3);
+            m.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            m.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            m.SetInt("_ZWrite", 0);
+            m.EnableKeyword("_ALPHABLEND_ON");
+            m.renderQueue = 3000;
         }
 
         static void SetTransparent(Material m)

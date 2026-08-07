@@ -21,6 +21,7 @@ namespace BrainRepublic.EditorTools
             CreateRefMat("UI/Default", "Assets/Resources/ShaderRefs/ui.mat");
             CreateRefMat("GUI/Text Shader", "Assets/Resources/ShaderRefs/text.mat");
             CreateRefMat("Skybox/Procedural", "Assets/Resources/ShaderRefs/sky.mat");
+            CreateRefMat("Sprites/Default", "Assets/Resources/ShaderRefs/sprite.mat"); // 트레일용
 
             // 부팅 씬: GameManager 하나가 전부를 조립한다
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);

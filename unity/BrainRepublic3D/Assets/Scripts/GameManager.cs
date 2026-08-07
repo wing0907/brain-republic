@@ -71,21 +71,36 @@ namespace BrainRepublic
             Camera.main.GetComponent<CameraFollow>().target = player.transform;
             Camera.main.transform.position = player.transform.position + new Vector3(0, 7.5f, -8.5f);
 
+            var pc = player.GetComponent<PlayerController>();
             if (skipIntroOnce)
             {
                 skipIntroOnce = false;
                 Playing = true;
-                ui.ShowHud(def);
+                ui.ShowHud(def, pc);
             }
             else
             {
                 ui.ShowIntro(def, () =>
                 {
                     Playing = true;
-                    ui.ShowHud(def);
+                    ui.ShowHud(def, pc);
                     sfx.Play(Sfx.Kind.Start);
                 });
             }
+        }
+
+        // ---- 스킬 (스테이지 i 클리어 = 스킬 i 해금) ----
+
+        public bool HasSkill(Skill s)
+        {
+            if (s == Skill.None) return false;
+            return PlayerPrefs.GetInt("stars_" + (int)s, -1) >= 1;
+        }
+
+        public void OnSkillUsed(Skill s)
+        {
+            sfx.Play(Sfx.Kind.Crystal);
+            ui.RefreshSkillButtons();
         }
 
         // ---- 자동 검증 훅 (헤드리스 QA에서 SendMessage로 호출) ----
@@ -144,6 +159,16 @@ namespace BrainRepublic
 
         public void OnHit()
         {
+            // 수막 방패: 해금 + 충전 완료 시 자동으로 한 번 막아준다
+            var pc = player.GetComponent<PlayerController>();
+            if (HasSkill(Skill.Shield) && pc.ConsumeShield())
+            {
+                sfx.Play(Sfx.Kind.Crystal);
+                ui.Flash(new Color(0.3f, 0.8f, 1f, 0.4f));
+                ui.Toast("수막 방패가 위험을 막았다!");
+                ui.RefreshSkillButtons();
+                return;
+            }
             sfx.Play(Sfx.Kind.Hit);
             ui.Flash(new Color(1f, 0.2f, 0.2f, 0.4f));
             Respawn();
@@ -168,14 +193,21 @@ namespace BrainRepublic
                 return;
             }
             Playing = false;
+            Time.timeScale = 1f;
             int stars = stageTime <= def.starTime3 ? 3 : stageTime <= def.starTime2 ? 2 : 1;
             int prev = PlayerPrefs.GetInt("stars_" + stageIndex, -1);
+            bool firstClear = prev < 1;
             if (stars > prev) PlayerPrefs.SetInt("stars_" + stageIndex, stars);
             if (stageIndex + 1 < StageDefs.All.Length && PlayerPrefs.GetInt("stars_" + (stageIndex + 1), -1) < 0)
-                PlayerPrefs.SetInt("stars_" + (stageIndex + 1), 0); // 다음 스테이지 해금
+                PlayerPrefs.SetInt("stars_" + (stageIndex + 1), 0); // 다음 에피소드 해금
             PlayerPrefs.Save();
             sfx.Play(Sfx.Kind.Clear);
-            ui.ShowClear(def, stars, stageTime, stageIndex + 1 < StageDefs.All.Length);
+
+            if (stageIndex == StageDefs.All.Length - 1)
+                ui.ShowEnding(StageDefs.EndingStory, stars);
+            else
+                ui.ShowClear(def, stars, stageTime, true,
+                    firstClear && def.grants != Skill.None ? def.skillName : null, def.skillDesc);
         }
 
         public void NextStage()
