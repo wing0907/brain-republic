@@ -53,4 +53,28 @@ export const EPISODE_REWARD_DIAMONDS = 1;
 export const BUREAU_COMPLETE_DIAMONDS = 5;
 export const DIAMOND_BOOST_COST = 3;  // 다이아 부스트: 전 국 게이지 +30
 
+// 야근 러시 (뇌정부청사 엔드리스 아케이드)
+export const COMBO_STEP = 5;   // 콤보 5마다 배율 +1
+export const MULT_MAX = 4;
+export const RUSH_MENTAL = 100;
+export const RUSH_BURST_DMG = [14, 20];
+export const RUSH_RESOLVE_HEAL = 1;
+export const RUSH_WRONG_DMG = 8;
+export const RUSH_KINGDOM_MULT = 0.05;    // 배율 = 1 + 0.05 × Σ국레벨
+export const RUSH_COIN_DIV = 8;           // 코인 = 점수/8
+export const RUSH_DIAMOND_PER = 5000;     // 점수 5000당 💎1 (최대 3)
+export const RUSH_DIAMOND_CAP = 3;
+export const RUSH_FAME_BONUS = 8;         // 점수 1500 이상이면 전 국 인지도 +8
+export const RUSH_FAME_SCORE = 1500;
+
+// 스파이 색출 (감사실 추리 이벤트)
+export const SPY_EVENT_CHANCE = 0.35;     // 돌발상황이 스파이 이벤트일 확률
+export const SPY_TIME_MS = 25000;         // 제한 시간
+export const SPY_REWARD_COINS = 300;
+export const SPY_REWARD_DIAMONDS = 1;
+export const SPY_FAIL_FAME_LOSS = 5;      // 실패/도주 시 전 국 인지도 감소
+
+// 퍼즐 제한시간
+export const PUZZLE_TIME_MS = 60000;
+
 export const STORAGE_KEY = 'brain-republic-save-v2';

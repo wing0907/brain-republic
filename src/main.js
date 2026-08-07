@@ -9,6 +9,8 @@ import { BureauScene } from './scenes/BureauScene.js';
 import { EpisodeScene } from './scenes/EpisodeScene.js';
 import { PuzzleScene } from './scenes/PuzzleScene.js';
 import { CrisisMiniScene } from './scenes/CrisisMiniScene.js';
+import { RushScene } from './scenes/RushScene.js';
+import { SpyScene } from './scenes/SpyScene.js';
 import { EndingScene } from './scenes/EndingScene.js';
 
 // 데모/시연용 세이브 주입 — URL 파라미터 ?demo=…
@@ -89,7 +91,7 @@ const game = new Phaser.Game({
   input: {
     activePointers: 3
   },
-  scene: [BootScene, TitleScene, MapScene, BureauScene, EpisodeScene, PuzzleScene, CrisisMiniScene, EndingScene]
+  scene: [BootScene, TitleScene, MapScene, BureauScene, EpisodeScene, PuzzleScene, CrisisMiniScene, RushScene, SpyScene, EndingScene]
 });
 
 // 테스트/디버그 훅 (스모크 테스트에서 씬 제어에 사용)

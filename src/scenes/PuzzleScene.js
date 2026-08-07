@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_W, GAME_H } from '../config.js';
+import { GAME_W, GAME_H, PUZZLE_TIME_MS } from '../config.js';
 import { BUREAU_BY_ID } from '../data/bureaus.js';
 import { saveState } from '../systems/save.js';
 import { applyReward } from '../systems/rewards.js';
@@ -43,11 +43,17 @@ export class PuzzleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(GAME_W / 2, 160, `${this.bureau.name}의 상징이 흩어졌습니다`, {
+      .text(GAME_W / 2, 158, `${this.bureau.name}의 상징이 흩어졌습니다`, {
         fontFamily: FONT,
         fontSize: '24px',
         color: '#a99cc7'
       })
+      .setOrigin(0.5);
+
+    // 제한시간 — 긴장감의 원천
+    this.timeLeft = PUZZLE_TIME_MS;
+    this.timerText = this.add
+      .text(GAME_W / 2, 205, '', { fontFamily: FONT, fontSize: '30px', fontStyle: 'bold', color: '#ffe9a0' })
       .setOrigin(0.5);
 
     this.ensureFrames();
@@ -207,6 +213,27 @@ export class PuzzleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.time.delayedCall(1200, () => this.finish(true));
+  }
+
+  update(_, deltaMs) {
+    if (this.done) return;
+    this.timeLeft -= deltaMs;
+    const s = Math.max(0, Math.ceil(this.timeLeft / 1000));
+    this.timerText.setText(`⏱ ${s}초`);
+    this.timerText.setColor(s <= 10 ? '#e8565e' : '#ffe9a0');
+    if (this.timeLeft <= 0) {
+      this.done = true;
+      sfx.danger();
+      const t = this.add
+        .text(GAME_W / 2, 1130, '시간 초과!', {
+          fontFamily: FONT,
+          fontSize: '44px',
+          fontStyle: 'bold',
+          color: '#e8565e'
+        })
+        .setOrigin(0.5);
+      this.time.delayedCall(1000, () => this.finish(false));
+    }
   }
 
   finish(success) {

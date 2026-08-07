@@ -31,7 +31,8 @@ export function freshState() {
     bureaus: Object.fromEntries(BUREAUS.map((b) => [b.id, freshBureau()])),
     lastTick: Date.now(),
     tutorialSeen: false,
-    kingdomComplete: false
+    kingdomComplete: false,
+    rushBest: 0
   };
 }
 

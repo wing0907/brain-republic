@@ -12,7 +12,94 @@ export function generateKingdomTextures(scene) {
     makeCreatures(scene, b);
     makeEmblem(scene, b);
   }
+  makeGovBuilding(scene);
   makeIcons(scene);
+}
+
+// ---------- 뇌정부청사: 지도 중앙의 관청 (야근 러시 입구) ----------
+function makeGovBuilding(scene) {
+  const W = 200;
+  const H = 200;
+  const g = scene.make.graphics({ x: 0, y: 0, add: false });
+  const cx = W / 2;
+  const baseY = H - 28;
+  const half = 86;
+  const fh = 30;
+  const floors = 3;
+
+  g.fillStyle(0x000000, 0.32);
+  g.fillEllipse(cx, baseY + 10, 165, 34);
+
+  for (let f = 0; f < floors; f++) {
+    const y = baseY - f * fh;
+    const topY = y - fh;
+    const wf = 1 - f * 0.1;
+    const hw = half * wf;
+    const hh = hw * 0.5;
+    g.fillStyle(0x4a3a68, 1);
+    g.fillPoints(
+      [
+        { x: cx - hw, y: topY },
+        { x: cx, y: topY + hh },
+        { x: cx, y: y + hh },
+        { x: cx - hw, y: y }
+      ],
+      true
+    );
+    g.fillStyle(0x5d4a82, 1);
+    g.fillPoints(
+      [
+        { x: cx + hw, y: topY },
+        { x: cx, y: topY + hh },
+        { x: cx, y: y + hh },
+        { x: cx + hw, y: y }
+      ],
+      true
+    );
+    // 야근 중인 창문 불빛 (금색)
+    for (let wIdx = 0; wIdx < 3; wIdx++) {
+      g.fillStyle(0xffd9a0, 0.95);
+      g.fillRect(cx - hw * 0.7 + wIdx * hw * 0.28, topY + hh * 0.62, 8, 11);
+      g.fillRect(cx + hw * 0.2 + wIdx * hw * 0.24, topY + hh * 0.62, 8, 11);
+    }
+  }
+
+  // 지붕 + 금색 돔
+  const roofY = baseY - floors * fh;
+  const hwTop = half * (1 - (floors - 1) * 0.1);
+  const hhTop = hwTop * 0.5;
+  g.fillStyle(0x6f5a9c, 1);
+  g.fillPoints(
+    [
+      { x: cx, y: roofY - hhTop },
+      { x: cx + hwTop, y: roofY },
+      { x: cx, y: roofY + hhTop },
+      { x: cx - hwTop, y: roofY }
+    ],
+    true
+  );
+  g.lineStyle(2, 0xffd9a0, 0.9);
+  g.strokePoints(
+    [
+      { x: cx, y: roofY - hhTop },
+      { x: cx + hwTop, y: roofY },
+      { x: cx, y: roofY + hhTop },
+      { x: cx - hwTop, y: roofY }
+    ],
+    true,
+    true
+  );
+  g.fillStyle(0xf0c541, 1);
+  g.fillCircle(cx, roofY - hhTop - 12, 14);
+  g.fillStyle(0xffe9a0, 1);
+  g.fillCircle(cx - 4, roofY - hhTop - 16, 5);
+  g.lineStyle(3, 0xd8cfec, 1);
+  g.lineBetween(cx, roofY - hhTop - 26, cx, roofY - hhTop - 44);
+  g.fillStyle(0xe8565e, 1);
+  g.fillTriangle(cx, roofY - hhTop - 44, cx + 20, roofY - hhTop - 38, cx, roofY - hhTop - 32);
+
+  g.generateTexture('bld-gov', W, H);
+  g.destroy();
 }
 
 function shade(color, f) {

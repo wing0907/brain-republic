@@ -13,7 +13,8 @@ import {
   EVENT_MAX_MS,
   EVENT_EXPIRE_MS,
   EVENT_IGNORE_FAME_LOSS,
-  DIAMOND_BOOST_COST
+  DIAMOND_BOOST_COST,
+  SPY_EVENT_CHANCE
 } from '../config.js';
 import { BUREAUS, BUREAU_BY_ID } from '../data/bureaus.js';
 import { loadState, saveState, incomePerSec, tickRealtime } from '../systems/save.js';
@@ -21,15 +22,16 @@ import { sfx } from '../systems/audio.js';
 
 const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
 
-// 아이소 대륙 위 건물 배치
+// 아이소 대륙 위 건물 배치 (중앙은 뇌정부청사 자리)
 const SPOTS = {
   memory: { x: 250, y: 430 },
   body: { x: 490, y: 470 },
   emotion: { x: 180, y: 630 },
-  impulse: { x: 430, y: 660 },
+  impulse: { x: 480, y: 672 },
   speech: { x: 275, y: 850 },
   dream: { x: 510, y: 845 }
 };
+const GOV_SPOT = { x: 350, y: 596 };
 
 export class MapScene extends Phaser.Scene {
   constructor() {
@@ -147,7 +149,41 @@ export class MapScene extends Phaser.Scene {
 
       this.buildings[b.id] = { img, label, status, spot, bureau: b };
     }
+    this.buildGovBuilding();
     this.refreshBuildings();
+  }
+
+  // 뇌정부청사 — 야근 러시 입구
+  buildGovBuilding() {
+    const gov = this.add
+      .image(GOV_SPOT.x, GOV_SPOT.y, 'bld-gov')
+      .setOrigin(0.5, 1)
+      .setDepth(GOV_SPOT.y)
+      .setInteractive({ useHandCursor: true });
+    this.tweens.add({
+      targets: gov,
+      scale: { from: 1, to: 1.035 },
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inout'
+    });
+    gov.on('pointerdown', () => {
+      sfx.ui();
+      saveState(this.state);
+      this.scene.start('Rush');
+    });
+    this.add
+      .text(GOV_SPOT.x, GOV_SPOT.y + 6, `🌙 야근 러시${this.state.rushBest > 0 ? ` · 최고 ${this.state.rushBest.toLocaleString()}` : ''}`, {
+        fontFamily: FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+        color: '#ffd9a0',
+        backgroundColor: '#12081fcc',
+        padding: { x: 8, y: 3 }
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(GOV_SPOT.y + 1);
   }
 
   refreshBuildings() {
@@ -313,6 +349,7 @@ export class MapScene extends Phaser.Scene {
     }
     const b = Phaser.Utils.Array.GetRandom(alive);
     const v = this.buildings[b.id];
+    const isSpy = Math.random() < SPY_EVENT_CHANCE;
     const crisis = Phaser.Utils.Array.GetRandom(b.crisis);
     sfx.alert();
 
@@ -321,6 +358,7 @@ export class MapScene extends Phaser.Scene {
       .setDepth(2500)
       .setScale(0)
       .setInteractive({ useHandCursor: true });
+    if (isSpy) icon.setTint(0xb069e8);
     this.tweens.add({ targets: icon, scale: 1.1, duration: 250, ease: 'back.out' });
     this.tweens.add({
       targets: icon,
@@ -329,8 +367,11 @@ export class MapScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1
     });
+    const bubbleText = isSpy
+      ? `[감사실] ${b.name} 인근에서 스파이 침투 정황 포착!`
+      : `[${crisis.dept}] ${crisis.line}`;
     const bubble = this.add
-      .text(v.spot.x, v.spot.y - v.img.height - 86, `[${crisis.dept}] ${crisis.line}`, {
+      .text(v.spot.x, v.spot.y - v.img.height - 86, bubbleText, {
         fontFamily: FONT,
         fontSize: '20px',
         fontStyle: 'bold',
@@ -344,10 +385,14 @@ export class MapScene extends Phaser.Scene {
 
     this.activeEvent = { bureauId: b.id, icon, bubble };
     icon.on('pointerdown', () => {
-      const minigame = Math.random() < 0.5 ? 'Puzzle' : 'CrisisMini';
       this.clearEvent();
       saveState(this.state);
-      this.scene.start(minigame, { bureauId: b.id, from: 'event' });
+      if (isSpy) {
+        this.scene.start('Spy');
+      } else {
+        const minigame = Math.random() < 0.5 ? 'Puzzle' : 'CrisisMini';
+        this.scene.start(minigame, { bureauId: b.id, from: 'event' });
+      }
     });
 
     this.eventExpire = this.time.delayedCall(EVENT_EXPIRE_MS, () => {
@@ -459,7 +504,9 @@ export class MapScene extends Phaser.Scene {
         '3. 인지도가 0이 되면 국장은 위독해지고,',
         '   오래 방치하면 잊혀져 소멸합니다.',
         '4. 에피소드와 돌발상황(⚠)을 해결해 코인·다이아를 모으고',
-        '   6개 국을 모두 완성해 1,428개 부서를 되살리세요!'
+        '   6개 국을 모두 완성해 1,428개 부서를 되살리세요!',
+        '5. 중앙 뇌정부청사의 「야근 러시」에서 실력을 증명하세요.',
+        '   보라색 경보(🟣)가 뜨면 스파이 색출 감사가 시작됩니다!'
       ].join('\n')
     );
     this.state.tutorialSeen = true;
