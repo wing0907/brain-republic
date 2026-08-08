@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import {
   GAME_W,
   GAME_H,
-  DAY_SECONDS,
+  DAY_SECONDS_BY_DAY,
   MENTAL_MAX,
   MENTAL_TIMEOUT_DMG,
   MENTAL_RESOLVE_HEAL,
@@ -41,6 +41,7 @@ export class RushScene extends Phaser.Scene {
   create() {
     this.st = this.registry.get('state');
     this.day = Math.min(this.st.day, 3);
+    this.daySeconds = DAY_SECONDS_BY_DAY[this.day - 1];
 
     this.elapsed = 0;
     this.mental = MENTAL_MAX;
@@ -608,9 +609,9 @@ export class RushScene extends Phaser.Scene {
     if (this.over) return;
     this.elapsed += deltaMs / 1000;
 
-    const remain = Math.max(0, DAY_SECONDS - this.elapsed);
+    const remain = Math.max(0, this.daySeconds - this.elapsed);
     this.timeText.setText(`${Math.floor(remain / 60)}:${String(Math.floor(remain % 60)).padStart(2, '0')}`);
-    this.daytimeText.setText(DAYTIMES[Math.min(DAYTIMES.length - 1, Math.floor((this.elapsed / DAY_SECONDS) * DAYTIMES.length))]);
+    this.daytimeText.setText(DAYTIMES[Math.min(DAYTIMES.length - 1, Math.floor((this.elapsed / this.daySeconds) * DAYTIMES.length))]);
 
     if (remain <= 0) {
       this.finish(false);

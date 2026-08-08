@@ -2,8 +2,8 @@
 export const GAME_W = 720;
 export const GAME_H = 1280;
 
-// 하루(러시) — W12
-export const DAY_SECONDS = 90;
+// 하루(러시) — W12. 초반은 짧고 경쾌하게, 갈수록 길고 치열하게
+export const DAY_SECONDS_BY_DAY = [60, 75, 90];
 export const MAX_DAYS = 3; // 데모 3일차, 이후 무한 반복(난이도 유지)
 
 // 멘탈 (주인의 상태)
