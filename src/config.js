@@ -103,6 +103,19 @@ export const WAVES = [
     weights: { memory: 2, body: 2, emotion: 2, impulse: 2, speech: 2, dream: 2 } }
 ];
 
+// EP01 아케이드 심화
+export const PERFECT_LIFE = 0.6;      // 타이머 링이 이만큼 남았으면 PERFECT
+export const PERFECT_MULT = 1.5;
+export const FEVER_COMBO = 8;         // 피버 발동 콤보
+export const FEVER_MS = 10000;
+export const FEVER_SCORE_MULT = 2;
+export const FEVER_SPAWN_ACCEL = 0.55; // 피버 중 스폰 간격 배율
+export const BOSS_AT = 150;           // 보스 등장 시각(초)
+export const BOSS_TIME_MS = 9000;
+export const BOSS_SCORE = 1500;
+export const BOSS_FAIL_DMG = 25;
+export const BOSS_HEAL = 10;
+
 export const GRADES = [
   { min: 14000, grade: 'S', label: '전원 기립 박수! 합격 통보가 도착했습니다.' },
   { min: 10000, grade: 'A', label: '면접관이 미소를 지었습니다. 유력 후보!' },

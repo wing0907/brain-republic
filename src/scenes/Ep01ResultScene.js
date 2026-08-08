@@ -74,7 +74,9 @@ export class Ep01ResultScene extends Phaser.Scene {
         GAME_W / 2,
         560,
         `최종 점수  ${finalScore.toLocaleString()}${isBest ? '  (신기록!)' : ''}\n` +
-          `멘탈 잔량  ${mental}/${MENTAL_MAX}  ·  최대 콤보  ${maxCombo}`,
+          `멘탈 잔량  ${mental}/${MENTAL_MAX}  ·  최대 콤보  ${maxCombo}\n` +
+          `PERFECT ${this.result.perfects || 0}  ·  피버 ${this.result.feverCount || 0}회` +
+          `${this.result.bossCleared ? '  ·  ⚡압박 면접 돌파!' : ''}`,
         {
           fontFamily: FONT,
           fontSize: '30px',

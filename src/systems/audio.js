@@ -214,6 +214,7 @@ const MELODY = [
 let musicTimer = null;
 let nextTime = 0;
 let stepIdx = 0;
+let musicRate = 1; // 피버 등에서 템포 가속
 
 function scheduleStep(s, t) {
   // 스윙: 홀수 8분음표를 살짝 뒤로 밀어 통통 튀는 리듬감
@@ -252,7 +253,7 @@ export const music = {
     musicTimer = setInterval(() => {
       while (nextTime < ctx.currentTime + 0.4) {
         scheduleStep(stepIdx, nextTime);
-        nextTime += EIGHTH;
+        nextTime += EIGHTH / musicRate;
         stepIdx = (stepIdx + 1) % 64;
       }
     }, 120);
@@ -262,5 +263,9 @@ export const music = {
       clearInterval(musicTimer);
       musicTimer = null;
     }
+  },
+  // 템포 배율 (1 = 기본, 1.25 = 피버)
+  setRate(r) {
+    musicRate = r;
   }
 };
