@@ -191,9 +191,10 @@ export const sfx = {
   }
 };
 
-// ---- 배경음악: 따뜻한 노을빛 로파이 루프 (C–Am–F–G, 80bpm) ----
+// ---- 배경음악: 통통 튀고 잔잔하면서 밝은 루프 ----
+// (원작 사이트 BGM 가이드의 "경쾌한" 톤 — 스타카토 플럭 + 펜타토닉 멜로디)
 // 외부 음원 없이 룩어헤드 스케줄러로 실시간 합성. unlock() 이후 start() 호출.
-const BPM = 80;
+const BPM = 96;
 const EIGHTH = 60 / BPM / 2;
 const CHORDS = [
   [261.6, 329.6, 392.0], // C
@@ -201,27 +202,46 @@ const CHORDS = [
   [174.6, 220.0, 261.6], // F
   [196.0, 246.9, 293.7]  // G
 ];
+// 통통 튀는 펜타토닉 멜로디 (C D E G A) — 마디당 8스텝, 0은 쉼표
+const PENTA = [523.3, 587.3, 659.3, 784.0, 880.0];
+const MELODY = [
+  0, 2, 4, 2, 3, 0, 1, 0,
+  2, 4, 3, 2, 0, 2, 1, 0,
+  4, 3, 2, 3, 4, 0, 3, 2,
+  1, 2, 3, 1, 0, 1, 0, 0
+];
 
 let musicTimer = null;
 let nextTime = 0;
 let stepIdx = 0;
 
 function scheduleStep(s, t) {
-  const at = Math.max(0, t - ctx.currentTime);
+  // 스윙: 홀수 8분음표를 살짝 뒤로 밀어 통통 튀는 리듬감
+  const swing = s % 2 === 1 ? EIGHTH * 0.18 : 0;
+  const at = Math.max(0, t - ctx.currentTime + swing);
   const bar = Math.floor(s / 8) % 4;
   const chord = CHORDS[bar];
   const inBar = s % 8;
+
+  // 잔잔한 패드 (아주 옅게)
   if (inBar === 0) {
-    // 패드: 마디 전체를 감싸는 3화음
-    for (const f of chord) tone({ freq: f, type: 'sine', dur: EIGHTH * 8, at, vol: 0.045 });
+    for (const f of chord) tone({ freq: f, type: 'sine', dur: EIGHTH * 8, at, vol: 0.03 });
   }
+  // 베이스: 1·5 스텝, 짧고 둥글게 (통통)
   if (inBar === 0 || inBar === 4) {
-    tone({ freq: chord[0] / 2, type: 'sine', dur: 0.5, at, vol: 0.13 });
+    tone({ freq: chord[0] / 2, type: 'sine', dur: 0.22, at, vol: 0.15, slide: -12 });
   }
-  // 아르페지오 (한 옥타브 위 삼각파)
-  tone({ freq: chord[s % 3] * 2, type: 'triangle', dur: 0.16, at, vol: 0.045 });
-  // 오프비트 해트
-  if (inBar % 2 === 1) noise({ dur: 0.03, at, vol: 0.028, lowpass: 6000 });
+  // 멜로디 플럭: 스타카토 삼각파 — 밝고 통통
+  const m = MELODY[s % MELODY.length];
+  if (m !== 0 || s % 8 === 0) {
+    const f = PENTA[m];
+    tone({ freq: f, type: 'triangle', dur: 0.11, at, vol: 0.085 });
+    tone({ freq: f * 2, type: 'sine', dur: 0.07, at, vol: 0.03 }); // 배음 반짝임
+  }
+  // 마디 시작 종소리
+  if (s % 16 === 0) tone({ freq: chord[2] * 4, type: 'sine', dur: 0.5, at, vol: 0.035 });
+  // 옅은 오프비트 해트
+  if (inBar % 2 === 1) noise({ dur: 0.025, at, vol: 0.022, lowpass: 7000 });
 }
 
 export const music = {
