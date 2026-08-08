@@ -12,6 +12,9 @@ import { CrisisMiniScene } from './scenes/CrisisMiniScene.js';
 import { RushScene } from './scenes/RushScene.js';
 import { SpyScene } from './scenes/SpyScene.js';
 import { EndingScene } from './scenes/EndingScene.js';
+import { Ep01IntroScene } from './scenes/Ep01IntroScene.js';
+import { Ep01Scene } from './scenes/Ep01Scene.js';
+import { Ep01ResultScene } from './scenes/Ep01ResultScene.js';
 
 // 데모/시연용 세이브 주입 — URL 파라미터 ?demo=…
 // doom: 20시간 방치 상태(2개 국 소멸 직전) → 입장 시 방치 정산·세대교체 연출
@@ -91,7 +94,21 @@ const game = new Phaser.Game({
   input: {
     activePointers: 3
   },
-  scene: [BootScene, TitleScene, MapScene, BureauScene, EpisodeScene, PuzzleScene, CrisisMiniScene, RushScene, SpyScene, EndingScene]
+  scene: [
+    BootScene,
+    TitleScene,
+    Ep01IntroScene,
+    Ep01Scene,
+    Ep01ResultScene,
+    MapScene,
+    BureauScene,
+    EpisodeScene,
+    PuzzleScene,
+    CrisisMiniScene,
+    RushScene,
+    SpyScene,
+    EndingScene
+  ]
 });
 
 // 테스트/디버그 훅 (스모크 테스트에서 씬 제어에 사용)
