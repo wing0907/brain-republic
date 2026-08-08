@@ -8,8 +8,8 @@ export const BUREAUS = [
     short: '기억',
     color: 0xc9a35f,
     accent: 0xf3d9a4,
-    interaction: 'mash',
-    stepHint: '연타! 서고를 뒤져라',
+    interaction: 'maze',
+    stepHint: '스와이프로 서고 미로를 돌파!',
     env: '오래된 나무뿌리 서고',
     species: 'rings', // 나이테 무늬·큰 귀
     keeper: '나이테 주임'

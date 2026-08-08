@@ -347,6 +347,8 @@ export class RushScene extends Phaser.Scene {
         this.gesture.holding = true;
       } else if (t === 'swipe') {
         this.gesture.start = { x: p.x, y: p.y };
+      } else if (t === 'maze') {
+        this.gesture.start = { x: p.x, y: p.y };
       }
     });
     this.gestureZone.on('pointermove', (p) => {
@@ -360,12 +362,20 @@ export class RushScene extends Phaser.Scene {
         }
       }
     });
-    const up = () => {
+    const up = (p) => {
       if (!this.gesture) return;
       this.gesture.holding = false;
       if (this.gesture.type === 'swipe') {
         this.gesture.start = null;
         this.setGestureProgress(0);
+      } else if (this.gesture.type === 'maze' && this.gesture.start && p && typeof p.x === 'number') {
+        const dx = p.x - this.gesture.start.x;
+        const dy = p.y - this.gesture.start.y;
+        this.gesture.start = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) >= 40) {
+          if (Math.abs(dx) > Math.abs(dy)) this.mazeMove(0, dx > 0 ? 1 : -1);
+          else this.mazeMove(dy > 0 ? 1 : -1, 0);
+        }
       }
     };
     this.gestureZone.on('pointerup', up);
@@ -420,6 +430,11 @@ export class RushScene extends Phaser.Scene {
       return;
     }
 
+    this.gestureHint.setY(560); // 기본 힌트 위치 복원 (미로는 자체 조정)
+    if (b.interaction === 'maze') {
+      this.startMaze(b, mine);
+      return;
+    }
     const needMash = mine ? STEP_MASH - 1 : STEP_MASH;
     this.gesture =
       b.interaction === 'mash'
@@ -432,6 +447,115 @@ export class RushScene extends Phaser.Scene {
       .setVisible(true);
     this.gestureZone.setVisible(true);
     this.setGestureProgress(0);
+  }
+
+  // ---------- 서고 미로 (기억인지국 전용 미니게임 — W9 서고 환경) ----------
+  // 5×5 DFS 미로를 스와이프로 이동해 기억 조각(◆)에 도달한다.
+
+  startMaze(b, mine) {
+    const N = 5;
+    const CELL = 88;
+    const ox = GAME_W / 2 - (N * CELL) / 2;
+    const oy = 430;
+
+    // DFS 완전 미로 생성 — walls[r][c] = {t,r,b,l}
+    const walls = Array.from({ length: N }, () =>
+      Array.from({ length: N }, () => ({ t: true, r: true, b: true, l: true }))
+    );
+    const seen = Array.from({ length: N }, () => Array(N).fill(false));
+    const stack = [[0, 0]];
+    seen[0][0] = true;
+    while (stack.length) {
+      const [r, c] = stack[stack.length - 1];
+      const nbrs = [
+        [r - 1, c, 't', 'b'],
+        [r + 1, c, 'b', 't'],
+        [r, c - 1, 'l', 'r'],
+        [r, c + 1, 'r', 'l']
+      ].filter(([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !seen[nr][nc]);
+      if (nbrs.length === 0) {
+        stack.pop();
+        continue;
+      }
+      const [nr, nc, mySide, theirSide] = Phaser.Utils.Array.GetRandom(nbrs);
+      walls[r][c][mySide] = false;
+      walls[nr][nc][theirSide] = false;
+      seen[nr][nc] = true;
+      stack.push([nr, nc]);
+    }
+
+    // 그리기
+    const objs = [];
+    const panel = this.add.graphics().setDepth(70);
+    panel.fillStyle(0x1a0f2e, 0.97);
+    panel.fillRect(ox - 24, oy - 24, N * CELL + 48, N * CELL + 48);
+    panel.lineStyle(4, 0xc9a35f, 1);
+    panel.strokeRect(ox - 24, oy - 24, N * CELL + 48, N * CELL + 48);
+    objs.push(panel);
+    const wg = this.add.graphics().setDepth(71);
+    wg.lineStyle(5, 0xc9a35f, 0.95);
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = ox + c * CELL;
+        const y = oy + r * CELL;
+        const w = walls[r][c];
+        if (w.t) wg.lineBetween(x, y, x + CELL, y);
+        if (w.l) wg.lineBetween(x, y, x, y + CELL);
+        if (r === N - 1 && w.b) wg.lineBetween(x, y + CELL, x + CELL, y + CELL);
+        if (c === N - 1 && w.r) wg.lineBetween(x + CELL, y, x + CELL, y + CELL);
+      }
+    }
+    objs.push(wg);
+    // 기억 조각 (목표, 우하단)
+    const goal = this.add
+      .text(ox + (N - 0.5) * CELL, oy + (N - 0.5) * CELL, '◆', {
+        fontFamily: FONT,
+        fontSize: '40px',
+        color: '#ffe14a'
+      })
+      .setOrigin(0.5)
+      .setDepth(72);
+    this.tweens.add({ targets: goal, scale: { from: 1, to: 1.25 }, duration: 450, yoyo: true, repeat: -1 });
+    objs.push(goal);
+    // 미로 속 나 (좌상단 시작)
+    const me = this.add.sprite(ox + CELL / 2, oy + CELL / 2, 'player-idle').setDepth(73).setScale(0.85);
+    objs.push(me);
+
+    this.gesture = { type: 'maze', walls, N, CELL, ox, oy, r: 0, c: 0, me, objs, movingCell: false };
+    this.gestureHint
+      .setY(oy - 60)
+      .setText('나: 스와이프로 서고 미로 돌파! 기억 조각(◆)까지! (전문 분야)')
+      .setVisible(true);
+    this.gestureZone.setVisible(true);
+  }
+
+  mazeMove(dr, dc) {
+    const g = this.gesture;
+    if (!g || g.type !== 'maze' || g.movingCell) return;
+    const w = g.walls[g.r][g.c];
+    if ((dr === -1 && w.t) || (dr === 1 && w.b) || (dc === -1 && w.l) || (dc === 1 && w.r)) {
+      sfx.wrong();
+      this.tweens.add({ targets: g.me, x: g.me.x + dc * 6, y: g.me.y + dr * 6, duration: 60, yoyo: true });
+      return;
+    }
+    g.r += dr;
+    g.c += dc;
+    g.movingCell = true;
+    sfx.tap();
+    g.me.setFlipX(dc < 0);
+    this.tweens.add({
+      targets: g.me,
+      x: g.ox + (g.c + 0.5) * g.CELL,
+      y: g.oy + (g.r + 0.5) * g.CELL,
+      duration: 110,
+      ease: 'sine.out',
+      onComplete: () => {
+        g.movingCell = false;
+        if (g.r === g.N - 1 && g.c === g.N - 1) {
+          this.stepSuccess(); // 정리는 stepSuccess→endGesture에서 일괄 처리
+        }
+      }
+    });
   }
 
   stepSuccess() {
@@ -459,6 +583,9 @@ export class RushScene extends Phaser.Scene {
   }
 
   endGesture() {
+    if (this.gesture && this.gesture.type === 'maze' && this.gesture.objs) {
+      for (const o of this.gesture.objs) o.destroy();
+    }
     this.gesture = null;
     this.gestureZone.setVisible(false);
     this.gestureHint.setVisible(false);
