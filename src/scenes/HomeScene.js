@@ -83,16 +83,16 @@ export class HomeScene extends Phaser.Scene {
 
   buildCity() {
     // 중앙 청사 + 좌우 3국씩
-    this.add.image(GAME_W / 2, 1005, 'bld-hall').setOrigin(0.5, 1).setDepth(5);
+    const hall = this.add.image(GAME_W / 2, 1005, 'bld-hall').setOrigin(0.5, 1).setDepth(5);
     this.add
-      .text(GAME_W / 2, 1012, '뇌정부청사', {
+      .text(GAME_W / 2, 1005 - hall.height - 14, '뇌정부청사', {
         fontFamily: FONT,
         fontSize: '18px',
         color: '#c9b8e8',
         backgroundColor: '#12081fcc',
         padding: { x: 6, y: 2 }
       })
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5, 1)
       .setDepth(6);
 
     const xs = [70, 185, 300, 420, 535, 650];
