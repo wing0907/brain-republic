@@ -3,7 +3,7 @@ import { GAME_W, GAME_H, GRADES, EP01_BEST_KEY, MENTAL_MAX } from '../config.js'
 import { BUREAU_BY_ID } from '../data/bureaus.js';
 import { sfx } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 export class Ep01ResultScene extends Phaser.Scene {
   constructor() {

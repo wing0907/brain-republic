@@ -20,7 +20,7 @@ import { EPISODES } from '../data/episodes.js';
 import { saveState, tickRealtime } from '../systems/save.js';
 import { sfx } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 export class BureauScene extends Phaser.Scene {
   constructor() {

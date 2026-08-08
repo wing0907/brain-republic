@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { GAME_W, GAME_H, EP01_BEST_KEY } from '../config.js';
 import { unlock, sfx, music } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 // 에피소드 허브 — 원작 확장 계획(슬라이스 오브 라이프 시리즈) 구조 그대로:
 // EP01(파일럿·면접 대작전)은 플레이 가능, 이후 에피소드는 차차 공개.

@@ -5,7 +5,7 @@ import { saveState } from '../systems/save.js';
 import { applyReward } from '../systems/rewards.js';
 import { sfx } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 const ROUNDS = 5;
 const NEED = 3;

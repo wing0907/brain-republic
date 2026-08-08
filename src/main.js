@@ -85,6 +85,8 @@ const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'app',
   backgroundColor: '#12081f',
+  pixelArt: true, // 니어리스트 스케일링 — 도트가 쨍하게
+  roundPixels: true,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

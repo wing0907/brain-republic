@@ -20,7 +20,7 @@ import { BUREAUS, BUREAU_BY_ID } from '../data/bureaus.js';
 import { loadState, saveState, incomePerSec, tickRealtime } from '../systems/save.js';
 import { sfx, setMuted, isMuted } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 // 아이소 대륙 위 건물 배치 (중앙은 뇌정부청사 자리)
 const SPOTS = {

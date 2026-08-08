@@ -143,6 +143,7 @@ src/
 | 오픈소스 | Vite | MIT | 빌드 도구 |
 | 개발 도구 | Playwright (Chromium) | Apache-2.0 | 헤드리스 QA (게임에 미포함) |
 | 엔진 | Unity 6 (6000.3.21f1) | Unity Personal | 3D 모드 (WebGL 빌드) |
+| 폰트 | Galmuri | SIL OFL 1.1 | 메인 게임 한글 픽셀 폰트 |
 | 폰트 | Pretendard | SIL OFL 1.1 | 3D 모드 한글 표시 (WebGL은 OS 폰트 폴백 없음) |
 | 이미지·3D 에셋 | 없음 — 전량 코드 생성 | — | — |
 | 사운드 에셋 | 없음 — WebAudio 합성 / 에디터 스크립트 WAV 생성 | — | — |

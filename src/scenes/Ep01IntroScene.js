@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { GAME_W, GAME_H } from '../config.js';
 import { sfx } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 // EP01 오프닝 — 파일럿 스크립트의 훅(S1~S3) 재현:
 // 면접실의 지원자 → 눈동자 흔들림 → 뇌정부청사 사이렌, 기자 생중계로 전환.

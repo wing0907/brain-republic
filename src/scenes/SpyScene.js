@@ -11,7 +11,7 @@ import { BUREAUS } from '../data/bureaus.js';
 import { saveState } from '../systems/save.js';
 import { sfx } from '../systems/audio.js';
 
-const FONT = 'Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+const FONT = 'Galmuri11, Pretendard, "Apple SD Gothic Neo", sans-serif';
 
 // 알리바이 활동 풀 (스파이의 거짓 증언과 무관한 중립 활동)
 const ACTIVITIES = [

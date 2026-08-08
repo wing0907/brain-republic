@@ -99,8 +99,10 @@ npm run dev    # http://localhost:5173 접속
   원천 기획자. 이 게임은 성지은의 기획으로부터 탄생했으며, EP01은 원작 파일럿
   스크립트(컷별 연출안)를 게임 구조로 옮긴 것입니다.
 - 엔진/기술: Phaser 3 (MIT) + Vite / 3D 모드: Unity 6 WebGL (Personal)
-- 그래픽·사운드: **외부 에셋 0** — 전량 코드로 프로시저럴 생성
-- 유일한 외부 에셋: 3D 모드 한글 폰트 **Pretendard** (SIL Open Font License 1.1,
-  https://github.com/orioncactus/pretendard)
+- 아트: **픽셀아트** — 도트 텍스처를 전량 코드로 프로시저럴 생성(6px 셀 스냅),
+  이미지 파일 에셋 0. 사운드도 전량 WebAudio 합성.
+- 외부 에셋(폰트 2종, 모두 SIL OFL 1.1 오픈 라이선스):
+  - **Galmuri** (한글 픽셀 폰트, 메인 게임 UI) — https://github.com/quiple/galmuri
+  - **Pretendard** (3D 모드 UI) — https://github.com/orioncactus/pretendard
 - AI 활용: 기획 번안·코드·밸런싱·QA 전 과정을 Claude Code로 제작 — 별첨
   「AI 활용 기술 문서」 참조

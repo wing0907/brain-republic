@@ -111,80 +111,66 @@ function shade(color, f) {
   );
 }
 
-// ---------- 지형: 뇌 주름 언덕이 있는 아이소메트릭 대지 ----------
+// ---------- 지형: 아이소 뇌 대륙 (도트 버전) ----------
 function makeIsoGround(scene) {
   const g = scene.make.graphics({ x: 0, y: 0, add: false });
-  // 하늘(노을 그라데이션)
-  g.fillGradientStyle(0x2a1440, 0x2a1440, 0x12081f, 0x12081f, 1);
+  const PIX = 6;
+  const CW = GAME_W / PIX; // 120
+  const CH = Math.ceil(GAME_H / PIX);
+  g.fillStyle(0x12081f, 1);
   g.fillRect(0, 0, GAME_W, GAME_H);
-  // 노을 태양
-  g.fillStyle(0xff9a5e, 0.18);
-  g.fillCircle(GAME_W / 2, 260, 190);
-  g.fillStyle(0xffc98a, 0.12);
-  g.fillCircle(GAME_W / 2, 260, 260);
 
-  // 대지: 큰 아이소 다이아몬드 (뇌 대륙)
-  const cx = GAME_W / 2;
-  const cy = 660;
-  const rw = 340;
-  const rh = 430;
-  // 측면(두께)
-  g.fillStyle(0x2b1836, 1);
-  g.fillPoints(
-    [
-      { x: cx - rw, y: cy },
-      { x: cx, y: cy + rh },
-      { x: cx, y: cy + rh + 36 },
-      { x: cx - rw, y: cy + 36 }
-    ],
-    true
-  );
-  g.fillStyle(0x241329, 1);
-  g.fillPoints(
-    [
-      { x: cx + rw, y: cy },
-      { x: cx, y: cy + rh },
-      { x: cx, y: cy + rh + 36 },
-      { x: cx + rw, y: cy + 36 }
-    ],
-    true
-  );
-  // 윗면
-  g.fillStyle(0x4a2c50, 1);
-  g.fillPoints(
-    [
-      { x: cx, y: cy - rh },
-      { x: cx + rw, y: cy },
-      { x: cx, y: cy + rh },
-      { x: cx - rw, y: cy }
-    ],
-    true
-  );
+  const rnd = new Phaser.Math.RandomDataGenerator(['brain-kingdom-pixel']);
+  const cell = (color, alpha, x, y, w = 1, h = 1) => {
+    g.fillStyle(color, alpha);
+    g.fillRect(x * PIX, y * PIX, w * PIX, h * PIX);
+  };
 
-  // 뇌 주름: 대지 위 구불구불한 능선 (결정적 시드로 항상 동일)
-  const rnd = new Phaser.Math.RandomDataGenerator(['brain-kingdom']);
-  for (let i = 0; i < 10; i++) {
-    const t = rnd.frac();
-    const y0 = cy - rh + 90 + t * (rh * 2 - 180);
-    const halfW = rw * (1 - Math.abs(y0 - cy) / rh) - 30;
-    if (halfW < 60) continue;
-    g.lineStyle(rnd.between(8, 16), 0xff9a5e, 0.10 + rnd.frac() * 0.08);
-    g.beginPath();
-    let x = cx - halfW;
-    g.moveTo(x, y0);
-    while (x < cx + halfW) {
-      const nx = Math.min(cx + halfW, x + rnd.between(40, 90));
-      const ny = y0 + rnd.between(-16, 16);
-      g.lineTo(nx, ny);
-      x = nx;
+  // 노을 디더 (상단)
+  for (let y = 0; y < 70; y++) {
+    for (let x = 0; x < CW; x++) {
+      const d = Math.hypot(x - CW / 2, (y - 44) * 1.2);
+      if (d < 30 && (x + y) % 2 === 0) cell(0xff9a5e, 0.12, x, y);
+      else if (d < 42 && (x + y) % 3 === 0) cell(0xffc98a, 0.07, x, y);
     }
-    g.strokePath();
   }
-  // 반딧불이/입자
-  for (let i = 0; i < 40; i++) {
-    g.fillStyle(0xffe9a0, 0.12 + rnd.frac() * 0.25);
-    g.fillCircle(rnd.between(20, GAME_W - 20), rnd.between(120, GAME_H - 120), rnd.between(1, 3));
+
+  // 아이소 다이아몬드 대륙 (셀 판정) + 측면 두께
+  const cx = CW / 2;
+  const cy = 110; // 660/6
+  const rw = 57;  // 340/6
+  const rh = 72;  // 430/6
+  for (let y = 0; y < CH; y++) {
+    for (let x = 0; x < CW; x++) {
+      const d = Math.abs(x - cx) / rw + Math.abs(y - cy) / rh;
+      if (d <= 1) {
+        cell(0x4a2c50, 1, x, y);
+        if (d > 0.94) cell(0x5d3a63, 1, x, y); // 가장자리 밝은 림
+      } else if (d <= 1.07 && y > cy) {
+        cell(x < cx ? 0x2b1836 : 0x241329, 1, x, y); // 측면 두께
+      }
+    }
   }
+
+  // 뇌 주름 능선 (대륙 위 도트 지그재그)
+  for (let i = 0; i < 9; i++) {
+    let y = cy - rh + 14 + Math.floor((i + rnd.frac()) * ((rh * 2 - 28) / 9));
+    const alpha = 0.12 + rnd.frac() * 0.1;
+    const halfW = Math.max(8, rw * (1 - Math.abs(y - cy) / rh) - 4);
+    let x = Math.floor(cx - halfW);
+    while (x < cx + halfW) {
+      const len = rnd.between(3, 7);
+      cell(0xff9a5e, alpha, x, y, Math.min(len, Math.floor(cx + halfW - x)), 2);
+      x += len + 1;
+      y = Phaser.Math.Clamp(y + rnd.between(-1, 1), cy - rh + 6, cy + rh - 6);
+    }
+  }
+
+  // 반딧불이
+  for (let i = 0; i < 50; i++) {
+    cell(0xffe9a0, 0.12 + rnd.frac() * 0.3, rnd.between(2, CW - 3), rnd.between(20, CH - 8));
+  }
+
   g.generateTexture('kingdom-ground', GAME_W, GAME_H);
   g.destroy();
 }
