@@ -75,7 +75,7 @@ cd brain-republic && npm install && npm run dev
 | 플레이(웹 빌드) | https://wing0907.github.io/brain-republic/ |
 | 소스 코드(GitHub) | https://github.com/wing0907/brain-republic |
 | 원작 세계관 | https://portfolio-worldview.vercel.app/ |
-| 플레이 영상(YouTube) | (업로드 후 기입) |
+| 플레이 영상(YouTube) | https://youtube.com/shorts/S4T-1n0NZNw |
 
 ## 5. 개발 정보
 

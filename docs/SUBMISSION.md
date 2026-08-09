@@ -5,8 +5,8 @@
 | # | 항목 | 형식 | 상태 |
 |---|---|---|---|
 | 1 | 플레이 가능한 빌드 + 전체 소스 | GitHub (웹 빌드 링크) | 🟢 완료 — https://wing0907.github.io/brain-republic/ (public, 커밋 기록 유지) |
-| 2 | 플레이 동영상 | YouTube, **30~60초**, 실제 플레이 화면(AI 조작·합성 불가) | 🔴 **촬영 필요** |
-| 3 | 게임 소개 및 설명 문서 | PDF | 🟡 `docs/pdf/GAME_INTRO.pdf` — 영상 링크만 기입 후 재생성 |
+| 2 | 플레이 동영상 | YouTube, **30~60초**, 실제 플레이 화면 | 🟢 https://youtube.com/shorts/S4T-1n0NZNw (공개 확인) |
+| 3 | 게임 소개 및 설명 문서 | PDF | 🟢 `docs/pdf/GAME_INTRO.pdf` — 영상 링크 기입 완료 |
 | 4 | AI 활용 기술 문서 | PDF | 🟢 `docs/pdf/AI_TECH_DOC.pdf` |
 | 5 | 팀원 롤 기술서 | PDF (2인 팀 필수) | 🟢 `docs/pdf/TEAM_ROLES.pdf` |
 | — | 참가 신청서 | 구글폼 | 🔴 **직접 제출**: https://docs.google.com/forms/d/e/1FAIpQLSdb2ifNzAdJpOYrRUCFA0DDQ7S56zTfcUsm79MI3aNTKOgsGg/viewform |
