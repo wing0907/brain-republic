@@ -3,7 +3,7 @@
 - NAN 2026 (NHN Game × AI Hackathon) 출품 · 팀 뇌지컬연구소
 - 원작 세계관·기획: 성지은 — https://portfolio-worldview.vercel.app/
 - 근거: `docs/WORLDBUILDING.md` (세계관→게임 요소 W1~W14 매핑)
-- 디자인 원칙: **포트리스류의 "단순하지만 중독적인" 문법** × 세계관의 부서 알력(W7)
+- 디자인 원칙: **고전 아틸러리 장르의 "단순하지만 중독적인" 문법** × 세계관의 부서 알력(W7)
 
 ---
 
