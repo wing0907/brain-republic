@@ -67,73 +67,59 @@ export const sfx = {
     tone({ freq: 620, type: 'sine', dur: 0.04, vol: 0.09 });
     tone({ freq: 930, type: 'sine', dur: 0.05, at: 0.025, vol: 0.07 });
   },
-  siren() {
-    tone({ freq: 660, type: 'square', dur: 0.09, vol: 0.11 });
-    tone({ freq: 520, type: 'square', dur: 0.09, at: 0.1, vol: 0.11 });
+  // 발사 (포슝)
+  fire() {
+    noise({ dur: 0.12, vol: 0.22, lowpass: 2600 });
+    tone({ freq: 300, type: 'square', dur: 0.22, vol: 0.16, slide: 320 });
   },
-  tap() {
-    tone({ freq: 880, type: 'triangle', dur: 0.04, vol: 0.1 });
+  // 폭발 (쾅)
+  boom() {
+    noise({ dur: 0.45, vol: 0.42, lowpass: 1500 });
+    tone({ freq: 90, type: 'sine', dur: 0.4, vol: 0.35, slide: -40 });
   },
-  holdTick(p = 0) {
-    tone({ freq: 300 + 400 * p, type: 'sine', dur: 0.05, vol: 0.07 });
+  // 직격
+  crit() {
+    noise({ dur: 0.5, vol: 0.45, lowpass: 2000 });
+    tone({ freq: 140, type: 'sawtooth', dur: 0.45, vol: 0.3, slide: -90 });
+    tone({ freq: 1200, type: 'triangle', dur: 0.15, at: 0.05, vol: 0.15, slide: -400 });
   },
-  stamp() {
-    noise({ dur: 0.08, vol: 0.3, lowpass: 1200 });
-    tone({ freq: 130, type: 'sine', dur: 0.16, vol: 0.4, slide: -60 });
+  // 조준 틱
+  aim() {
+    tone({ freq: 500, type: 'sine', dur: 0.03, vol: 0.05 });
   },
-  step() {
-    // 협력 단계 하나 성공 (경쾌한 팝)
-    tone({ freq: 700, type: 'triangle', dur: 0.07, vol: 0.13, slide: 160 });
+  whoosh() {
+    noise({ dur: 0.2, vol: 0.1, lowpass: 2200 });
   },
-  burst() {
-    noise({ dur: 0.3, vol: 0.3, lowpass: 2500 });
-    tone({ freq: 320, type: 'sawtooth', dur: 0.35, vol: 0.2, slide: -220 });
-  },
-  wrong() {
+  hit() {
     tone({ freq: 220, type: 'square', dur: 0.13, vol: 0.16 });
   },
-  chime(step = 0) {
-    const base = 520 * Math.pow(1.12, Math.min(step, 8));
-    tone({ freq: base, type: 'triangle', dur: 0.1, vol: 0.15 });
-    tone({ freq: base * 1.5, type: 'triangle', dur: 0.12, at: 0.06, vol: 0.12 });
-  },
-  coin() {
-    tone({ freq: 990, type: 'triangle', dur: 0.06, vol: 0.12 });
-    tone({ freq: 1320, type: 'triangle', dur: 0.1, at: 0.06, vol: 0.12 });
-  },
-  levelup() {
-    [392, 494, 587, 784].forEach((f, i) => tone({ freq: f, type: 'triangle', dur: 0.16, at: i * 0.09, vol: 0.18 }));
-  },
-  fanfare() {
+  win() {
     [523, 659, 784, 1046].forEach((f, i) => tone({ freq: f, type: 'triangle', dur: 0.25, at: i * 0.13, vol: 0.2 }));
     noise({ dur: 0.5, at: 0.5, vol: 0.1, lowpass: 6000 });
   },
-  fail() {
-    [392, 330, 262].forEach((f, i) => tone({ freq: f, type: 'sawtooth', dur: 0.25, at: i * 0.16, vol: 0.16 }));
+  lose() {
+    [392, 330, 262, 196].forEach((f, i) => tone({ freq: f, type: 'sawtooth', dur: 0.3, at: i * 0.18, vol: 0.16 }));
   },
-  run() {
-    // 캐릭터 달려오는 소리 (또각또각)
-    tone({ freq: 240, type: 'triangle', dur: 0.04, vol: 0.08 });
-    tone({ freq: 260, type: 'triangle', dur: 0.04, at: 0.09, vol: 0.08 });
-    tone({ freq: 240, type: 'triangle', dur: 0.04, at: 0.18, vol: 0.08 });
+  fanfare() {
+    [392, 523, 659, 784, 1046].forEach((f, i) => tone({ freq: f, type: 'triangle', dur: 0.22, at: i * 0.11, vol: 0.19 }));
   }
 };
 
-// ---- BGM: 통통 튀고 잔잔한 밝은 루프 (96bpm 스윙, 펜타토닉 플럭) ----
-const BPM = 96;
+// ---- BGM: 긴장감 있는 대치 + 경쾌함 (92bpm, 마이너 펜타 플럭) ----
+const BPM = 92;
 const EIGHTH = 60 / BPM / 2;
 const CHORDS = [
-  [261.6, 329.6, 392.0],
-  [220.0, 261.6, 329.6],
-  [174.6, 220.0, 261.6],
-  [196.0, 246.9, 293.7]
+  [220.0, 261.6, 329.6], // Am
+  [174.6, 220.0, 261.6], // F
+  [261.6, 329.6, 392.0], // C
+  [196.0, 246.9, 293.7]  // G
 ];
-const PENTA = [523.3, 587.3, 659.3, 784.0, 880.0];
+const PENTA = [440.0, 523.3, 587.3, 659.3, 784.0];
 const MELODY = [
-  0, 2, 4, 2, 3, 0, 1, 0,
-  2, 4, 3, 2, 0, 2, 1, 0,
-  4, 3, 2, 3, 4, 0, 3, 2,
-  1, 2, 3, 1, 0, 1, 0, 0
+  0, 0, 2, 0, 3, 0, 1, 0,
+  2, 0, 4, 2, 0, 3, 0, 0,
+  1, 0, 3, 1, 4, 0, 2, 0,
+  3, 2, 1, 0, 2, 0, 0, 0
 ];
 
 let musicTimer = null;
@@ -142,19 +128,17 @@ let stepIdx = 0;
 let musicRate = 1;
 
 function scheduleStep(s, t) {
-  const swing = s % 2 === 1 ? EIGHTH * 0.18 : 0;
+  const swing = s % 2 === 1 ? EIGHTH * 0.15 : 0;
   const at = Math.max(0, t - ctx.currentTime + swing);
   const chord = CHORDS[Math.floor(s / 8) % 4];
   const inBar = s % 8;
-  if (inBar === 0) for (const f of chord) tone({ freq: f, type: 'sine', dur: EIGHTH * 8, at, vol: 0.03 });
-  if (inBar === 0 || inBar === 4) tone({ freq: chord[0] / 2, type: 'sine', dur: 0.22, at, vol: 0.15, slide: -12 });
+  if (inBar === 0) for (const f of chord) tone({ freq: f, type: 'sine', dur: EIGHTH * 8, at, vol: 0.028 });
+  if (inBar === 0 || inBar === 4) tone({ freq: chord[0] / 2, type: 'sine', dur: 0.24, at, vol: 0.14, slide: -10 });
   const m = MELODY[s % MELODY.length];
-  if (m !== 0 || s % 8 === 0) {
-    tone({ freq: PENTA[m], type: 'triangle', dur: 0.11, at, vol: 0.085 });
-    tone({ freq: PENTA[m] * 2, type: 'sine', dur: 0.07, at, vol: 0.03 });
+  if (m !== 0 || s % 16 === 0) {
+    tone({ freq: PENTA[m], type: 'triangle', dur: 0.1, at, vol: 0.07 });
   }
-  if (s % 16 === 0) tone({ freq: chord[2] * 4, type: 'sine', dur: 0.5, at, vol: 0.035 });
-  if (inBar % 2 === 1) noise({ dur: 0.025, at, vol: 0.022, lowpass: 7000 });
+  if (inBar % 2 === 1) noise({ dur: 0.02, at, vol: 0.02, lowpass: 6500 });
 }
 
 export const music = {
